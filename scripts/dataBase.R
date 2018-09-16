@@ -215,3 +215,22 @@ getUsersArticlesTimeDiffMatrix = function(eventsMaxTime, usersArticlesAvgTimeMat
   usersArticlesTimeDiffMatrix = (eventsMaxTime - usersArticlesAvgTimeMatrix)/60/60/24
   return(usersArticlesTimeDiffMatrix)  
 }
+
+writeClustersToDB = function(clusters, con){
+  dbSendQuery(con, "delete from clusters")
+  dbSendQuery(con, "copy clusters from stdin")
+  postgresqlCopyInDataframe(con, as.data.frame(clusters))
+}
+
+
+writeClustersProfilesToDB = function(clustersProfiles, con){
+  
+  dbSendQuery(con, "delete from clusters_profiles")
+  dfClustersProfiles = as.data.frame(melt(t(result$clustersProfiles), varnames = c("cluster","tag"), value.name = "rec_idx"))
+  print(nrow(dfClustersProfiles))
+  dbSendQuery(trainningConnection, "copy clusters_profiles(cluster,tag,rec_idx) from stdin")
+  postgresqlCopyInDataframe(trainningConnection, dfClustersProfiles)
+  
+}
+
+

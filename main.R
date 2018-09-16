@@ -14,17 +14,23 @@ library(compiler)
 
 library(profvis)
 
-library(SPOT)
+library(reshape2)
+
 #### Import Functions ####
 debugSource('scripts/evaluation.R')
 debugSource('scripts/dataBase.R')
+debugSource('input.R')
 #### Main ####
 enableJIT(0)
 
 clearConnections()
 
-trainningConnection = getDataBaseConnection(schema = 'trainning2000' ,dbUser = "cl-us-gzh",dbHost = "10.238.4.109",dbName = "cl-us-gzh",dbPass = "cl-us-gzh")
-
+#trainningConnection = getDataBaseConnection(schema = 'trainning2000' ,dbUser = "cl-us-gzh",dbHost = "10.238.4.109",dbName = "cl-us-gzh",dbPass = "cl-us-gzh")
+trainningConnection = getDataBaseConnection(schema = schema,
+                                            dbUser = dbUser,
+                                            dbHost = dbHost,
+                                            dbName = dbName,
+                                            dbPass = dbPass)
 # number of clusters must be less then or equal to the number of users available for clustering.
 # 2000 = 1021
 # 200 = 104
@@ -33,18 +39,6 @@ trainningConnection = getDataBaseConnection(schema = 'trainning2000' ,dbUser = "
 
 trainningData = getTrainningData(trainningConnection)
 
-clusterMethod           = 'ward.D'
-tagsMethod              = 'topn'
-noClustersK             = 64
-articlesMethod          = 'index'
-
-usersTimeDiffAlphaIndex = 0.016
-mixedDistanceBetaIndex  = 0.036
-forgCurveLambdaIndex    = 0.282
-tagsCutGamaIndex        =  1034
-articlesCutZetaIndex    = 0.999
-
-
 result = executeModel(trainningData    = trainningData,
                clusterMethod           = clusterMethod,
                noClustersK             = noClustersK,
@@ -52,5 +46,9 @@ result = executeModel(trainningData    = trainningData,
                mixedDistanceBetaIndex  = mixedDistanceBetaIndex,
                forgCurveLambdaIndex    = forgCurveLambdaIndex,
                tagsCutGamaIndex        = tagsCutGamaIndex)
+
+writeClustersToDB(result$clusters, trainningConnection)
+
+writeClustersProfilesToDB(result$clustersProfiles, trainningConnection)
 
 clearConnections()

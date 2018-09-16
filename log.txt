@@ -69,3 +69,21 @@
 2018-09-10 12:19:20 return(list(contentDistance = contentDistance
 2018-09-10 12:19:21 if (method == 'ward.D') {
 2018-09-10 12:19:22 parameters = list(method = method,
+2018-09-10 17:14:17 behaviourDistanceTime = system.time({
+2018-09-10 17:14:41 contentDistanceTime = system.time({
+2018-09-10 17:15:20 mixedDistanceTime = system.time({
+2018-09-10 17:15:21 return(list(contentDistance = contentDistance
+2018-09-10 17:15:22 if (method == 'ward.D') {
+2018-09-10 17:15:24 parameters = list(method = method,
+2018-09-10 17:33:59 behaviourDistanceTime = system.time({
+2018-09-10 17:34:22 contentDistanceTime = system.time({
+2018-09-10 17:35:01 mixedDistanceTime = system.time({
+2018-09-10 17:35:02 return(list(contentDistance = contentDistance
+2018-09-10 17:35:03 if (method == 'ward.D') {
+2018-09-10 17:35:04 parameters = list(method = method,
+2018-09-10 17:48:14 behaviourDistanceTime = system.time({
+2018-09-10 18:03:01 contentDistanceTime = system.time({
+2018-09-10 18:14:20 mixedDistanceTime = system.time({
+2018-09-10 18:14:22 return(list(contentDistance = contentDistance
+2018-09-10 18:14:24 if (method == 'ward.D') {
+2018-09-10 18:14:32 parameters = list(method = method,
