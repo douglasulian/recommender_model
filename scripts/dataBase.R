@@ -28,20 +28,34 @@ getDataBaseConnection = function(schema,dbUser,dbHost,dbName,dbPass, dbPort = 54
 }
 
 # Extracts the articles x tags matrix from the database
-getArticlesTagsMatrix = function(con, justPushes = FALSE){
+getArticlesTagsMatrix = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), justPushes = FALSE){
   if (justPushes) {
-    where = 'where ar.push_time is not null '
+    whre = 'where ar.push_time is not null '
   }
   else{
-    where = 'where ar.push_time is null '
+    whre = 'where ar.push_time is null '
   }
-  # Extracts articles versus tags table, with count of occurences  
-  articlesTags = dbGetQuery(con, paste0("select ar.id,coalesce(case when trim(tg.no_plural) = '' then '<NA>' else trim(tg.no_plural) end ,'<NA>') as",'"tagName"',",count(1)
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    whre = paste0(whre," and exists (select 1 from events e where ar.id = e.article_id and e.data_evento >= '",format(from,"%Y-%m-%d"),"')")
+    # Extracts articles versus tags table, with count of occurences  
+    articlesTags = dbGetQuery(con, paste0("select ar.id,coalesce(case when trim(tg.no_plural) = '' then '<NA>' else trim(tg.no_plural) end ,'<NA>') as",'"tagName"',",count(1)
                             from articles ar
                             left join articles_tags art on ar.id = art.article_id
-                            left join tags tg on art.tag_id = tg.id ",where,"
+                            left join tags tg on art.tag_id = tg.id ",whre,"
                             group by tg.no_plural, ar.id
                             order by ar.id desc, tg.no_plural desc"))
+  }
+  else{
+    # Extracts articles versus tags table, with count of occurences  
+    articlesTags = dbGetQuery(con, paste0("select ar.id,coalesce(case when trim(tg.no_plural) = '' then '<NA>' else trim(tg.no_plural) end ,'<NA>') as",'"tagName"',",count(1)
+                            from articles ar
+                            left join articles_tags art on ar.id = art.article_id
+                            left join tags tg on art.tag_id = tg.id ",whre,"
+                            group by tg.no_plural, ar.id
+                            order by ar.id desc, tg.no_plural desc"))    
+  }
+  
+
   
   # Converts table into matrix
   articlesTagsMatrix = spread(articlesTags,key = tagName,value = count, fill = 0)
@@ -53,28 +67,44 @@ getArticlesTagsMatrix = function(con, justPushes = FALSE){
   return(articlesTagsMatrix)
 }
 
-# Retrieves max timestamp from events
-getEventsMaxTime = function(con){
-  return(as.numeric(dbGetQuery(con, "select max(extract(epoch from e.data_evento)) from events e")))
-}
 
-getUsersArticlesMatrices = function(con, withPushes = FALSE){
-  # Extracts users versus articles table, with avverage age for each article  
-  if (withPushes) {
-    where = ''
+# Retrieves max timestamp from events
+getEventsMaxTime = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y")){
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    return(as.numeric(dbGetQuery(con, paste0("select max(extract(epoch from e.data_evento)) from events e where e.data_evento >= '",format(from,"%Y-%m-%d"),"'"))))
   }
   else{
-    where = 'where a.push_time is null '
+    return(as.numeric(dbGetQuery(con, "select max(extract(epoch from e.data_evento)) from events e")))
+  }
+}
+
+getUsersArticlesMatrices = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), withPushes = FALSE){
+  # Extracts users versus articles table, with avverage age for each article  
+  if (withPushes) {
+    whre = ''
+  }
+  else{
+    whre = 'where a.push_time is null '
+  }
+  
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    if (whre == ''){
+      whre = 'where '
+    }
+    else{
+      whre = paste0(whre,' and ')
+    }
+    whre = paste0(whre," e.data_evento >= '",format(from,"%Y-%m-%d"),"' ")
   }
   usersArticles = dbGetQuery(con, paste0('select u.email,
-                                                 e.article_id as "articleId" ,
-                                                 avg(extract(epoch from e.data_evento)) as "avgTime",
-                                                 count(e.article_id) as "count"
-                                            from users u
-                                           inner join events e on u.email = e.email
-                                           inner join articles a on e.article_id = a.id 
-                                           ',where,'
-                                           group by u.email,e.article_id,a.popularity'))    
+                                                   e.article_id as "articleId" ,
+                                                   avg(extract(epoch from e.data_evento)) as "avgTime",
+                                                   count(e.article_id) as "count"
+                                              from users u
+                                             inner join events e on u.email = e.email
+                                             inner join articles a on e.article_id = a.id 
+                                             ',whre,'
+                                             group by u.email,e.article_id,a.popularity'))    
   # Converts table into matrix
   usersArticlesMatrix = usersArticles
   usersArticlesMatrix$avgTime = NULL
@@ -120,12 +150,22 @@ getUsersArticlesPushM = function(con){
 
 
 # Calculates popularity penalty index
-getArticlesPopularityIndexVector = function(con){
-  articlesPopularityIndexVector = dbGetQuery(con, 'select id as "articleId",
-                                                          popularity as "popularity" 
-                                                     from articles
-                                                    group by id
-                                                    order by id desc')
+getArticlesPopularityIndexVector = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y")) {
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    articlesPopularityIndexVector = dbGetQuery(con, paste0('select ar.id as "articleId",', 
+                                                           'count(distinct e.email) as "popularity"',
+                                                       'from articles ar ',
+                                                 'inner join events e on ar.id = e.article_id ',
+                                                                     "where e.data_evento >='",format(from,"%Y-%m-%d"),"'", 
+                                                      'group by ar.id order by ar.id desc'))
+  }
+  else{
+    articlesPopularityIndexVector = dbGetQuery(con, 'select id as "articleId",
+                                                            popularity as "popularity" 
+                                                       from articles
+                                                      group by id
+                                                      order by id desc')
+  }
   articlesPopularityIndexVector = arrange(articlesPopularityIndexVector,desc(articleId))
   return(articlesPopularityIndexVector)
 }
@@ -187,7 +227,21 @@ getTrainningData = function(con){
                        articlesPopularityIndexVector = articlesPopularityIndexVector) 
   return(trainningData)
 }
-
+getTrainningDataFrom = function(con,from){
+  articlesTagsMatrix            = getArticlesTagsMatrix(con,from)
+  articlesPopularityIndexVector = getArticlesPopularityIndexVector(con,from)
+  usersArticlesMatrices         = getUsersArticlesMatrices(con,from)
+  eventsMaxTime                 = getEventsMaxTime(con,from) 
+  
+  articlesPopularityIndexVector      = setPopularityIndex(articlesPopularityIndexVector)
+  usersArticlesTimeDiffMatrix        = getUsersArticlesTimeDiffMatrix(eventsMaxTime,usersArticlesMatrices$usersArticlesAvgTimeMatrix)
+  
+  trainningData = list(articlesTagsMatrix            = articlesTagsMatrix,
+                       usersArticlesMatrix           = usersArticlesMatrices$usersArticlesMatrix,
+                       usersArticlesTimeDiffMatrix   = usersArticlesTimeDiffMatrix,
+                       articlesPopularityIndexVector = articlesPopularityIndexVector) 
+  return(trainningData)
+}
 
 getTestingData = function(con){
   articlesTagsMTS          = getArticlesTagsMatrix(con = con)
@@ -232,5 +286,3 @@ writeClustersProfilesToDB = function(clustersProfiles, con){
   postgresqlCopyInDataframe(trainningConnection, dfClustersProfiles)
   
 }
-
-

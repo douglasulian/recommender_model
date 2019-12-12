@@ -4,13 +4,13 @@ dbHost                  = "10.238.4.109"
 dbName                  = "cl-us-gzh"
 dbPass                  = "cl-us-gzh"
 
-clusterMethod           = 'ward.D'
-tagsMethod              = 'topn'
-noClustersK             = 64
+clusterMethod           = 'complete'
+tagsMethod              = 'index'
 articlesMethod          = 'index'
 
-usersTimeDiffAlphaIndex = 0.016
-mixedDistanceBetaIndex  = 0.036
-forgCurveLambdaIndex    = 0.282
-tagsCutGamaIndex        =  1034
-articlesCutZetaIndex    = 0.999
+usersTimeDiffAlphaIndex = 0.1974
+mixedDistanceBetaIndex  = 0.5244
+forgCurveLambdaIndex    = 0.9040
+noClustersK             = 16
+tagsCutGamaIndex        = 0.4511
+articlesCutZetaIndex    = 0.5618

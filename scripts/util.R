@@ -130,25 +130,26 @@ printNice = function(value,size,precision = 0){
 
 printHeader = function(enabled = TRUE){
   if (enabled) {
-    cat(paste0('| CLS.MTH | TAG.MTH | TAG.IDX | ART.MTH | ART.IDX | UxU.IDX | FGC.IDX | MXD.IDX | Distan. | Cluster | NBR.CLS | Solut.  | Result  |','\n'))
+    cat(file = "console.txt",append = TRUE,paste0('| CLS.MTH | TAG.MTH | TAG.IDX | ART.MTH | ART.IDX | UxU.IDX | FGC.IDX | MXD.IDX | Distan. | Cluster | NBR.CLS | Solut.  | Result  | TotTime |','\n'))
   }
 }
 
 printValue = function(value,parameter,enabled = TRUE){
   if (enabled) {
-    if      (parameter == 'clusterMethod'          ) cat(paste0('| ', printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'tagsMethod'             ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'tagsCutGamaIndex'       ) cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
-    else if (parameter == 'articlesMethod'         ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'articlesCutZetaIndex'   ) cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
-    else if (parameter == 'usersTimeDiffAlphaIndex') cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
-    else if (parameter == 'forgCurveLambdaIndex'   ) cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
-    else if (parameter == 'mixedDistanceBetaIndex' ) cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
-    else if (parameter == 'noClustersK'            ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'distances'              ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'clusters'               ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'solution'               ) cat(paste0(      printNice(value = value, size = 7), ' | '))
-    else if (parameter == 'result'                 ) cat(paste0(      printNice(value = value, size = 7, precision = 3), ' | ','\n'))
+    if      (parameter == 'clusterMethod'          ) cat(file = "console.txt",append = TRUE,paste0('| ', printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'tagsMethod'             ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'tagsCutGamaIndex'       ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'articlesMethod'         ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'articlesCutZetaIndex'   ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'usersTimeDiffAlphaIndex') cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'forgCurveLambdaIndex'   ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'mixedDistanceBetaIndex' ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'noClustersK'            ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'distances'              ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'clusters'               ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'solution'               ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7), ' | '))
+    else if (parameter == 'result'                 ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 3), ' | '))
+    else if (parameter == 'totalTime'              ) cat(file = "console.txt",append = TRUE, paste0(      printNice(value = value, size = 7, precision = 1), ' | ','\n'))
   }
 }
 
@@ -171,20 +172,22 @@ writeLog = function(message){
 
 sendEmail = function(subject, body){
   result = tryCatch({
+    currentSpace = as.numeric(system(command = "df /home  | awk '{ print $4 }'", intern = TRUE)[2])/1024/1024
+    spaceMessage = paste0('Current space is: ', printNice(currentSpace,6,2), ' GB\n')
+    
     r = send.mail(from    = "<douglas.ulian@gruporbs.com.br>",
                   to      = "<douglas.ulian@gruporbs.com.br>",
                   subject = subject,
-                  body    = body,
-                  smtp    = list(host.name = "smtp.office365.com", 
-                                 port = 25,
-                                 user.name = "douglas.ulian@gruporbs.com.br",
-                                 passwd = "Grup0RBS24",
-                                 tls = TRUE),
-                  authenticate = TRUE,
+                  body    = paste0(spaceMessage,body),
+                  smtp    = list(host.name = "192.168.50.128",
+                                port = 25),
+                  authenticate = FALSE,
                   send = TRUE)
   }, warning = function(w) {
+    whiteLog(w)
     2
   }, error = function(e) {
+    whiteLog(e)
     1
   }, finally = {
     0
@@ -207,11 +210,12 @@ printCache = function(x, y, clusterMethod, tagsMethod, articlesMethod){
     printValue(parameter = 'noClustersK'            , value = x[i,6])
     printValue(parameter = 'solution'               , value = 'CACHE'   )
     printValue(parameter = 'result'                 , value = -y[i])
+    printValue(parameter = 'totalTime'              , value = 0)
   }
 }
 
 enoughSpace = function(){
-  if (file.exists('compact.txt'))
+  if (file.exists('controls//compact.txt'))
     return(FALSE)
   # space = system(command = "df /home  | awk '{ print $4 }'", intern = TRUE)[2]
   if ((as.numeric(system(command = "df /home  | awk '{ print $4 }'", intern = TRUE)[2])/1024/1024) < 30)
@@ -221,8 +225,8 @@ enoughSpace = function(){
 }
 
 getNoCores = function(){
-  if (file.exists('no_cores.txt')) {
-    noCores = as.numeric(readLines('no_cores.txt')[1])
+  if (file.exists('controls//no_cores.txt')) {
+    noCores = as.numeric(readLines('controls//no_cores.txt')[1])
   }
   else{
     noCores = detectCores(all.tests = FALSE, logical = TRUE) - 2

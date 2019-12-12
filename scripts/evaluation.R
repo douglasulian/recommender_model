@@ -9,85 +9,194 @@ library(dplyr)
 debugSource(fileName = 'scripts/util.R')
 debugSource(fileName = 'scripts/distances.R')
 debugSource(fileName = 'scripts/cluster.R')
+#debugSource(fileName = 'scripts/cache.R')
 #### Code ####
 
-executeModel = function(trainningData,
+spotTest = function(x,
+                    trainningData,
+                    testingData,
+                    cacheFile,
+                    cacheDir,
+                    clusterMethod,
+                    tagsMethod,
+                    articlesMethod){
+  
+  results = c(rep(0,nrow(x)))
+  
+  for (i in 1:nrow(x)) {
+    testResult = test(trainningData           = trainningData,
+                      testingData             = testingData,
+                      cacheFile               = cacheFile, 
+                      cacheDir                = cacheDir,
+                      clusterMethod           = clusterMethod,
+                      tagsMethod              = tagsMethod,
+                      articlesMethod          = articlesMethod,
+                      tagsCutGamaIndex        = x[i,1],
+                      articlesCutZetaIndex    = x[i,2],
+                      forgCurveLambdaIndex    = x[i,3],
+                      usersTimeDiffAlphaIndex = x[i,4],
+                      mixedDistanceBetaIndex  = x[i,5],
+                      noClustersK             = x[i,6])  
+    results[i] = testResult$solution$informedness*-1
+    gc()
+    if (file.exists('controls//halt.txt')) browser()
+  }
+  
+  return(as.matrix(results))
+}
+  
+test = function(trainningData,
+                testingData,
+                cacheFile,
+                cacheDir,
                 clusterMethod,
+                tagsMethod,
+                articlesMethod,
                 noClustersK,
                 usersTimeDiffAlphaIndex,
                 mixedDistanceBetaIndex,
                 forgCurveLambdaIndex,
-                tagsCutGamaIndex
+                tagsCutGamaIndex,
+                articlesCutZetaIndex
 ){
-  printValue(parameter = 'clusterMethod'          , value = clusterMethod)
-  printValue(parameter = 'tagsMethod'             , value = tagsMethod)
-  printValue(parameter = 'tagsCutGamaIndex'       , value = tagsCutGamaIndex)
-  printValue(parameter = 'articlesMethod'         , value = articlesMethod)
-  printValue(parameter = 'articlesCutZetaIndex'   , value = articlesCutZetaIndex)
-  printValue(parameter = 'usersTimeDiffAlphaIndex', value = usersTimeDiffAlphaIndex)
-  printValue(parameter = 'forgCurveLambdaIndex'   , value = forgCurveLambdaIndex)
-  printValue(parameter = 'mixedDistanceBetaIndex' , value = mixedDistanceBetaIndex)
+  totalTime = system.time({
+    writeLog('starting teste')
+    printValue(parameter = 'clusterMethod'          , value = clusterMethod)
+    printValue(parameter = 'tagsMethod'             , value = tagsMethod)
+    printValue(parameter = 'tagsCutGamaIndex'       , value = tagsCutGamaIndex)
+    printValue(parameter = 'articlesMethod'         , value = articlesMethod)
+    printValue(parameter = 'articlesCutZetaIndex'   , value = articlesCutZetaIndex)
+    printValue(parameter = 'usersTimeDiffAlphaIndex', value = usersTimeDiffAlphaIndex)
+    printValue(parameter = 'forgCurveLambdaIndex'   , value = forgCurveLambdaIndex)
+    printValue(parameter = 'mixedDistanceBetaIndex' , value = mixedDistanceBetaIndex)
+    
+    noClustersK = round(noClustersK)
+    if (tagsMethod == 'topn') {
+      tagsCutGamaIndex = round(tagsCutGamaIndex)
+    }
+    if (articlesMethod == 'topn') {
+      articlesCutZetaIndex = round(articlesCutZetaIndex)
+    }
+    cache = loadCache(cacheDir = cacheDir,cacheFile = cacheFile)
+    distancesCache = cache$distancesCache
+    clustersCache  = cache$clustersCache
+    solutionsCache = cache$solutionsCache
+    
+    writeLog('retrieving solution from the cache')
+    solution = getSolutionFromCache(solutionsCache    = solutionsCache, 
+                                    cacheDir          = cacheDir,
+                                    curClusterMethod  = clusterMethod, 
+                                    curTagsMethod     = tagsMethod,
+                                    curArticlesMethod = articlesMethod,
+                                    curAlphaIndex     = usersTimeDiffAlphaIndex,
+                                    curBetaIndex      = mixedDistanceBetaIndex, 
+                                    curLambdaIndex    = forgCurveLambdaIndex,
+                                    curGamaIndex      = tagsCutGamaIndex,
+                                    curZetaIndex      = articlesCutZetaIndex,
+                                    curNoClustersK    = noClustersK)
+    updateCache = FALSE
+    if (is.null(solution)) {
+      writeLog('solution not found at the cache')  
+      
+      writeLog('retrieving distance from the cache')  
+      distanceFromCache = getDistanceFromCache(distancesCache = distancesCache, cacheDir = cacheDir, curAlphaIndex = usersTimeDiffAlphaIndex,curBetaIndex = mixedDistanceBetaIndex, curLambdaIndex = forgCurveLambdaIndex)
+      
+      if (is.null(distanceFromCache$distances)) {
+        writeLog('distance not found at from the cache, calculating distance')  
+        distances      = getDistances(trainningData, lambdaIndex = forgCurveLambdaIndex, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex)
+        writeLog('distance calculated, saving it to cache')
+        distancesCache = saveDistanceToCache(distancesCache = distancesCache, cacheDir = cacheDir, distances = distances, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex, lambdaIndex = forgCurveLambdaIndex)    
+        writeLog('distance saved to cache')
+        printValue(parameter = 'distances'              , value = 'NEW'   )      
+          
+      }
+      else{
+        writeLog('distance found at the cache')
+        distancesCache = distanceFromCache$distancesCache
+        distances = distanceFromCache$distances
+        printValue(parameter = 'distances'              , value = 'CACHE'   )
+      }
+      writeLog('retrieving clusters from cache')
+      cluster  = getClusterFromCache(clustersCache = clustersCache, cacheDir = cacheDir, curAlphaIndex = usersTimeDiffAlphaIndex, curBetaIndex = mixedDistanceBetaIndex, curLambdaIndex = forgCurveLambdaIndex,curClusterMethod = clusterMethod, curNoClustersK = noClustersK)
+      distance = distances$mixedDistance
+      if (class(distances$data) == 'list') {
+        usersTagsMatrix = distances$data$usersTagsMatrix
+      }
+      else{
+        usersTagsMatrix = distances$usersTagsMatrix
+      }
+      rm(list = c('distances'))
+      gc()
+      if (is.null(cluster)) {
+        writeLog('clusters not found at the cache, calculating cluters')  
+        cluster       = getCluster(distance = distance, k = noClustersK, method = clusterMethod)
+        writeLog('clusters calculated, saving it to cache')  
+        clustersCache = saveClusterToCache(clustersCache, cacheDir = cacheDir, cluster = cluster, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex, lambdaIndex = forgCurveLambdaIndex, clusterMethod = clusterMethod, noClustersK = noClustersK)
+        writeLog('clusters saved to cache')  
+        printValue(parameter = 'clusters'               , value = 'NEW'   )
+      }
+      else{
+        printValue(parameter = 'clusters'               , value = 'CACHE'   )
+      }
+      printValue(parameter = 'noClustersK'            , value = noClustersK)  
+      
+      
+      writeLog('calculating solution')  
   
-  noClustersK = round(noClustersK)
-  
-  if (tagsMethod == 'topn') {
-    tagsCutGamaIndex = round(tagsCutGamaIndex)
-  }
-  if (articlesMethod == 'topn') {
-    articlesCutZetaIndex = round(articlesCutZetaIndex)
-  }
-
-  distances      = getDistances(trainningData, lambdaIndex = forgCurveLambdaIndex, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex)
-
-  printValue(parameter = 'distances'              , value = 'NEW'   )      
-  
-  distance = distances$mixedDistance
-  
-  gc()
-  
-  clusters       = cluster(distance = distance, k = noClustersK, method = clusterMethod)
-  
-  printValue(parameter = 'clusters'               , value = 'NEW'   )
-  printValue(parameter = 'noClustersK'            , value = noClustersK)  
-  
-  clustersProfiles = getClustersProfiles(usersTagsM = distances$usersTagsMatrix, 
-                                         clusters = clusters$cluster$cluster,
-                                         tagsCutGamaIndex = tagsCutGamaIndex,
-                                         tagsMethod = tagsMethod)
-
-  return(list(clusters  = clusters$cluster$cluster,
-              clustersProfiles = clustersProfiles))
+      # Evaluates the solution with KMedoid clustering
+      solution = evaluateSolution(testingData    = testingData, 
+                                  usersTagsM     = usersTagsMatrix, 
+                                  cluster        = cluster$cluster$cluster, 
+                                  clusterMethod  = clusterMethod, 
+                                  tagsMethod     = tagsMethod,
+                                  articlesMethod = articlesMethod,
+                                  alphaIndex     = usersTimeDiffAlphaIndex,
+                                  betaIndex      = mixedDistanceBetaIndex,
+                                  lambdaIndex    = forgCurveLambdaIndex,
+                                  gamaIndex      = tagsCutGamaIndex,
+                                  zetaIndex      = articlesCutZetaIndex,
+                                  k              = noClustersK) 
+      updateCache = TRUE
+      writeLog('solution calculated, saving it to cache')  
+      solutionsCache = saveSolutionToCache(solutionsCache = solutionsCache, 
+                                           cacheDir       = cacheDir, 
+                                           solution       = solution,
+                                           clusterMethod  = clusterMethod, 
+                                           tagsMethod     = tagsMethod,
+                                           articlesMethod = articlesMethod,
+                                           alphaIndex     = usersTimeDiffAlphaIndex,
+                                           betaIndex      = mixedDistanceBetaIndex, 
+                                           lambdaIndex    = forgCurveLambdaIndex,
+                                           gamaIndex      = tagsCutGamaIndex,
+                                           zetaIndex      = articlesCutZetaIndex,
+                                           noClustersK    = noClustersK)    
+      writeLog('solution saved to cache')  
+      printValue(parameter = 'solution'               , value = 'NEW'    )
+    }
+    else {
+      writeLog('solution found at the cache')  
+      printValue(parameter = 'distances'              , value = 'CACHE'   )
+      printValue(parameter = 'clusters'               , value = 'CACHE'   )
+      printValue(parameter = 'noClustersK'            , value = noClustersK)
+      printValue(parameter = 'solution'               , value = 'CACHE'   )
+    }
+    printValue(parameter = 'result'                 , value = solution$informedness)
+    if (updateCache) {
+      cache$distancesCache = distancesCache
+      cache$clustersCache  = clustersCache
+      cache$solutionsCache = solutionsCache
+      writeLog('saving cache')  
+      saveCache(cacheDir = cacheDir, cacheFile = cacheFile, cache = cache)
+      writeLog('cache saved') 
+    }
+  })
+  printValue(parameter = 'totalTime'                 , value = totalTime[3])
+  return(list(cluster  = cluster,
+              solution = solution,
+              cache    = cache))
   
 }
 
-getClustersProfiles = function(usersTagsM, clusters, tagsCutGamaIndex, tagsMethod){
-  #### Creates the recommendation profile
-  # Normalizes the users versus tags matrix so that the index cut can
-  # be applied with the same scale to all users
-  usersTagsNormMTR = getNormMatrix(usersTagsM, byCol = FALSE)
-  
-  # Builds a users versus cluster matrix from trainning (transforms
-  # the cluster table into a matrix with zeros and ones)
-  usersClustersMTR = getUsersClustersMatrix(clusters)
-  
-  # Builds a tags versus cluster matrix crossing tags fro users and
-  # clusters from users 
-  tagsClustersMTR  = getTagsClustersMatrix(usersTagsNormMTR,usersClustersMTR)
-  
-  # Tests if solution should be evaluated based on "top n" tags or
-  # over tag relevance (gamaIndex)
-  if (tagsMethod == 'topn') {
-    # No need to normalize tags per cluster
-    # Top N of each cluster will be selected
-    tagsClustersMTR    = getTagsClustersTopNMatrix(tagsClustersM = tagsClustersMTR, n = tagsCutGamaIndex)
-  } else if (tagsMethod == 'index') {
-    # Applies the gamaIndex to the clusters x tags matrix, returning a new 
-    # matrix with ones at tags that are above the gamaIndex and zeros on the 
-    # rest
-    tagsClustersMTR    = getTagsClustersCutMatrix(tagsClustersM = tagsClustersMTR, limit = tagsCutGamaIndex)
-  } else stop(call. = TRUE)
-  return(tagsClustersMTR)
-}
 
 evaluateSolution = function(testingData, usersTagsM, cluster, clusterMethod, tagsMethod, articlesMethod, alphaIndex, betaIndex, lambdaIndex, gamaIndex, zetaIndex, k){
   writeLog('evaluating solution')
@@ -238,7 +347,6 @@ evaluateSolution = function(testingData, usersTagsM, cluster, clusterMethod, tag
   realTypeTwoError = sum(usersArticlesNotSuggM > 0)
   negativeHits = (positiveHits + typeOneError)*(realNegativeHits/(realNegativeHits + realTypeTwoError))
   typeTwoError = (positiveHits + typeOneError)*(realTypeTwoError/(realNegativeHits + realTypeTwoError))
-  
   
   
   result = measureResults(tp = positiveHits,
@@ -452,3 +560,80 @@ getArticlesClustersCutMatrix = function(articlesClustersM, limit){
   return(getCutMatrix(m = articlesClustersM, limit = limit))
 }
 
+executeModel = function(trainningData,
+                        clusterMethod,
+                        noClustersK,
+                        usersTimeDiffAlphaIndex,
+                        mixedDistanceBetaIndex,
+                        forgCurveLambdaIndex,
+                        tagsCutGamaIndex
+){
+  printValue(parameter = 'clusterMethod'          , value = clusterMethod)
+  printValue(parameter = 'tagsMethod'             , value = tagsMethod)
+  printValue(parameter = 'tagsCutGamaIndex'       , value = tagsCutGamaIndex)
+  printValue(parameter = 'articlesMethod'         , value = articlesMethod)
+  printValue(parameter = 'articlesCutZetaIndex'   , value = articlesCutZetaIndex)
+  printValue(parameter = 'usersTimeDiffAlphaIndex', value = usersTimeDiffAlphaIndex)
+  printValue(parameter = 'forgCurveLambdaIndex'   , value = forgCurveLambdaIndex)
+  printValue(parameter = 'mixedDistanceBetaIndex' , value = mixedDistanceBetaIndex)
+  
+  noClustersK = round(noClustersK)
+  
+  if (tagsMethod == 'topn') {
+    tagsCutGamaIndex = round(tagsCutGamaIndex)
+  }
+  if (articlesMethod == 'topn') {
+    articlesCutZetaIndex = round(articlesCutZetaIndex)
+  }
+  
+  distances      = getDistances(trainningData, lambdaIndex = forgCurveLambdaIndex, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex)
+  
+  printValue(parameter = 'distances'              , value = 'NEW'   )      
+  
+  distance = distances$mixedDistance
+  
+  gc()
+  
+  clusters       = getCluster(distance = distance, k = noClustersK, method = clusterMethod)
+  
+  printValue(parameter = 'clusters'               , value = 'NEW'   )
+  printValue(parameter = 'noClustersK'            , value = noClustersK)  
+  
+  clustersProfiles = getClustersProfiles(usersTagsM = distances$usersTagsMatrix, 
+                                         clusters = clusters$cluster$cluster,
+                                         tagsCutGamaIndex = tagsCutGamaIndex,
+                                         tagsMethod = tagsMethod)
+  
+  return(list(clusters  = clusters$cluster$cluster,
+              clustersProfiles = clustersProfiles))
+  
+}
+
+getClustersProfiles = function(usersTagsM, clusters, tagsCutGamaIndex, tagsMethod){
+  #### Creates the recommendation profile
+  # Normalizes the users versus tags matrix so that the index cut can
+  # be applied with the same scale to all users
+  usersTagsNormMTR = getNormMatrix(usersTagsM, byCol = FALSE)
+  
+  # Builds a users versus cluster matrix from trainning (transforms
+  # the cluster table into a matrix with zeros and ones)
+  usersClustersMTR = getUsersClustersMatrix(clusters)
+  
+  # Builds a tags versus cluster matrix crossing tags fro users and
+  # clusters from users 
+  tagsClustersMTR  = getTagsClustersMatrix(usersTagsNormMTR,usersClustersMTR)
+  
+  # Tests if solution should be evaluated based on "top n" tags or
+  # over tag relevance (gamaIndex)
+  if (tagsMethod == 'topn') {
+    # No need to normalize tags per cluster
+    # Top N of each cluster will be selected
+    tagsClustersMTR    = getTagsClustersTopNMatrix(tagsClustersM = tagsClustersMTR, n = tagsCutGamaIndex)
+  } else if (tagsMethod == 'index') {
+    # Applies the gamaIndex to the clusters x tags matrix, returning a new 
+    # matrix with ones at tags that are above the gamaIndex and zeros on the 
+    # rest
+    tagsClustersMTR    = getTagsClustersCutMatrix(tagsClustersM = tagsClustersMTR, limit = tagsCutGamaIndex)
+  } else stop(call. = TRUE)
+  return(tagsClustersMTR)
+}

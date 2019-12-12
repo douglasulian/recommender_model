@@ -1,5 +1,5 @@
 #### Libraries ####
-list.of.packages = c('lsa','fastcluster','fpc','cluster','dbscan')
+list.of.packages = c('lsa','fastcluster','fpc','cluster','dbscan','ClusterR')
 new.packages = list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if (length(new.packages)) install.packages(new.packages)
 
@@ -9,18 +9,28 @@ library(cluster) # Partitioning clustering
 library(lsa) # Loads LSA library that contains cosine distance calculation for matrices.
 library(fpc)
 library(dbscan)
+library(ClusterR)
 
 #### Code ####
-cluster = function(distance, method, k){
+getCluster = function(distance, method, k){
   k = round(k)
-  if (method == 'ward.D') {
-    writeLog("if (method == 'ward.D') {")
-    cluster = getHierarchicalCluster(distance = distance, k = k, method = 'ward.D')
-  }
-  else if (method == 'kmedoid') {
+  if (method == 'kmedoid') {
     writeLog('cluster = getKMedoidCluster(distance = distance, k = k)')
     cluster = getKMedoidCluster(distance = distance, k = k)
   }
+  else if (method == 'pam') {
+    writeLog('cluster = getKMedoidCluster(distance = distance, k = k)')
+    cluster = getPAMCluster(distance = distance, k = k)
+  }
+  else if (method == 'kmeans'){
+    writeLog('cluster = getKMedoidCluster(distance = distance, k = k)')
+    cluster = getKMeansCluster(distance = distance, k = k)
+  }
+  else{
+    writeLog("if (method == 'other') {")
+      cluster = getHierarchicalCluster(distance = distance, k = k, method = method)
+  }
+    
   writeLog('parameters = list(method = method,')
   # clusterTab = getClustersTab(clusters = list(cluster = cluster), contentData = usersTagsMatrix)
   parameters = list(method = method,
@@ -28,6 +38,61 @@ cluster = function(distance, method, k){
   return(list(cluster = cluster,
               parameters = parameters))
 }
+
+getCluster2 = function(distance, method, u){
+  # noCores = detectCores(all.tests = FALSE, logical = TRUE) - 2
+  noCores = getNoCores()
+  doParallel::registerDoParallel(cores = noCores,outfile = 'clusterTest.txt')
+  
+  maxK = round(sqrt(u))
+  tDistance = t(distance)
+  distance[upper.tri(distance)] = tDistance[upper.tri(tDistance)]
+
+  clusterTime = system.time({
+    if (method == 'ward.D') {
+      if (class(distance) == 'matrix') {
+        diss = as.dist(distance)  
+      }
+      
+      hierarcCluster = hclust(d = diss,method = method)
+  
+      resultado = foreach(i = 2:maxK) %dopar% {
+        clusters     = cutree(hierarcCluster,k = i) 
+        silhouette   = summary(silhouette(x = clusters, dmatrix = distance))
+        list(clusters = clusters,
+             silhouettes = silhouette)
+      }
+  
+    }
+    else if (method == 'kmedoid') {
+      resultado = foreach(i = 2:maxK) %dopar% {
+          clusters     = pam(x = distance, diss = TRUE,k = i,cluster.only = TRUE,do.swap = TRUE, pamonce = 2)
+          silhouette   = summary(silhouette(x = clusters,dmatrix = distance))
+        list(clusters = clusters,
+             silhouettes = silhouette)
+      }
+      
+    }
+  })
+  silhouettes = unlist(lapply(X = resultado,FUN = function(x) x$silhouettes$si.summary[4]))
+  k = as.numeric(which(max(silhouettes) == silhouettes)[1] + 1)
+  
+  cluster = getClusterSolution(users = labels(resultado[[k - 1]]$clusters),
+                               usersClusters = as.vector(resultado[[k - 1]]$clusters),
+                               time = clusterTime,
+                               k = k,
+                               method = method,
+                               diss = distance,
+                               clusterObject = resultado[[k - 1]]$clusters)
+
+  parameters = list(method = method,
+                    k = k)
+  
+  doParallel::stopImplicitCluster()
+  return(list(cluster = list(cluster = cluster),
+              parameters = parameters))
+}
+
 
 getHierarchicalCluster = function(distance, method ,k){
   
@@ -56,43 +121,63 @@ getHierarchicalCluster = function(distance, method ,k){
   return(cluster)
 }
 
-getKMedoidCluster = function(distance, k){
+getPAMCluster = function(distance, k){
   writeLog('if (class(distance) == "matrix") { ')
   if (class(distance) == 'matrix') {
     distance = as.dist(distance)  
   }
   writeLog('kmedCluster = pam(x = distance, diss = TRUE,k = k)')
   clusterTime = system.time({
-    kmedCluster = pam(x = distance, diss = TRUE, k = k, cluster.only = TRUE, do.swap = TRUE, pamonce = 2)
+    pamClusters = pam(x = distance, diss = TRUE, k = k, cluster.only = TRUE, do.swap = TRUE, pamonce = 2)
   })
   writeLog('cluster = getClusterSolution(users = labels(kmedCluster$clustering),')
-  cluster = getClusterSolution(users = labels(kmedCluster),
-                               usersClusters = as.vector(kmedCluster),
+  cluster = getClusterSolution(users = labels(pamClusters),
+                               usersClusters = as.vector(pamClusters),
                                time = clusterTime,
                                k = k,
-                               method = 'PAM',
+                               method = 'pam',
+                               diss = distance,
+                               clusterObject = pamClusters)
+  writeLog('return(cluster)')
+  return(cluster)
+}
+
+getKMedoidCluster = function(distance, k){
+  writeLog('Cluster_Medoids(data = matrixDistance,clusters = k,verbose = FALSE,threads = 7,swap_phase = TRUE)')
+  clusterTime = system.time({
+    kmedCluster = Cluster_Medoids(data = distance,clusters = k,verbose = FALSE,threads = 7,swap_phase = TRUE)
+  })
+  writeLog('cluster = getClusterSolution(users = labels(kmedCluster$clustering),')
+  cluster = getClusterSolution(users = rownames(distance),
+                               usersClusters = as.vector(kmedCluster$clusters),
+                               time = clusterTime,
+                               k = k,
+                               method = 'kmedoid',
                                diss = distance,
                                clusterObject = kmedCluster)
   writeLog('return(cluster)')
   return(cluster)
 }
 
-getKMeansCluster = function(distance, data, k){
+getKMeansCluster = function(distance, k){
+  writeLog('if (class(distance) == "matrix") { ')
   if (class(distance) == 'matrix') {
     distance = as.dist(distance)  
   }
+  writeLog('kmedCluster = pam(x = distance, diss = TRUE,k = k)')
   clusterTime = system.time({
+    #kmedCluster = pam(x = distance, diss = TRUE, k = k, cluster.only = TRUE, do.swap = TRUE, pamonce = 2)
     kmeansCluster = (kmeans(data, k))
   })
-  
-  cluster = getClusterSolution(users = labels(kmeansCluster$cluster),
-                               usersClusters = as.vector(kmeansCluster$cluster),
+  writeLog('cluster = getClusterSolution(users = labels(kmedCluster$clustering),')
+  cluster = getClusterSolution(users = labels(kmeansCluster),
+                               usersClusters = as.vector(kmeansCluster),
                                time = clusterTime,
                                k = k,
                                method = 'kmeans',
                                diss = distance,
                                clusterObject = kmeansCluster)
-  
+  writeLog('return(cluster)')
   return(cluster)
 }
 
@@ -169,8 +254,7 @@ clusterTest = function(distances, k){
   auxDistances[[2]]$type = 'behaviour'
   auxDistances[[3]]$distance = as.dist(distances$mixedDistance)
   auxDistances[[3]]$type = 'mixed'
-  contentData = distances$data$usersTagsMatrix
-  
+
   # clusterMethods = c('complete', 'single','average', 'centroid','media','ward.D')
   clusterMethods = c('average','ward.D')
   clusters = list()
@@ -190,7 +274,7 @@ clusterTest = function(distances, k){
     
     if (distanceType == 'content') {
       curTest = curTest + 1
-      clusters[[curTest]] = getKMeansCluster(distance = distance, k = k, data = contentData)
+      clusters[[curTest]] = getPAMCluster(distance = distance, k = k)
     }
     
   }

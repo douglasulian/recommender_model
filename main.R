@@ -16,6 +16,8 @@ library(profvis)
 
 library(reshape2)
 
+setwd("/home/douglas_ulian/recommender_model")
+
 #### Import Functions ####
 debugSource('scripts/evaluation.R')
 debugSource('scripts/dataBase.R')

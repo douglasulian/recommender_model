@@ -87,3 +87,33 @@
 2018-09-10 18:14:22 return(list(contentDistance = contentDistance
 2018-09-10 18:14:24 if (method == 'ward.D') {
 2018-09-10 18:14:32 parameters = list(method = method,
+2019-12-12 13:19:59 behaviourDistanceTime = system.time({
+2019-12-12 13:28:44 contentDistanceTime = system.time({
+2019-12-12 13:32:28 mixedDistanceTime = system.time({
+2019-12-12 13:32:29 return(list(contentDistance = contentDistance
+2019-12-12 13:38:01 behaviourDistanceTime = system.time({
+2019-12-12 13:44:52 contentDistanceTime = system.time({
+2019-12-12 13:47:24 mixedDistanceTime = system.time({
+2019-12-12 13:47:26 return(list(contentDistance = contentDistance
+2019-12-12 13:56:12 behaviourDistanceTime = system.time({
+2019-12-12 14:03:51 contentDistanceTime = system.time({
+2019-12-12 14:06:54 mixedDistanceTime = system.time({
+2019-12-12 14:06:56 return(list(contentDistance = contentDistance
+2019-12-12 14:09:48 behaviourDistanceTime = system.time({
+2019-12-12 14:16:39 contentDistanceTime = system.time({
+2019-12-12 14:19:29 mixedDistanceTime = system.time({
+2019-12-12 14:19:32 return(list(contentDistance = contentDistance
+2019-12-12 14:27:42 behaviourDistanceTime = system.time({
+2019-12-12 14:35:02 contentDistanceTime = system.time({
+2019-12-12 14:37:51 behaviourDistanceTime = system.time({
+2019-12-12 14:43:02 contentDistanceTime = system.time({
+2019-12-12 14:45:36 mixedDistanceTime = system.time({
+2019-12-12 14:45:37 return(list(contentDistance = contentDistance
+2019-12-12 14:45:38 if (method == 'other') {
+2019-12-12 14:45:45 parameters = list(method = method,
+2019-12-12 14:59:23 behaviourDistanceTime = system.time({
+2019-12-12 15:04:19 contentDistanceTime = system.time({
+2019-12-12 15:06:31 mixedDistanceTime = system.time({
+2019-12-12 15:06:32 return(list(contentDistance = contentDistance
+2019-12-12 15:06:33 if (method == 'other') {
+2019-12-12 15:06:40 parameters = list(method = method,
