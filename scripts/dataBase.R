@@ -68,6 +68,60 @@ getArticlesTagsMatrix = function(con, from = as.Date("01-01-1970", format = "%d-
 }
 
 
+# Extracts the articles x tags matrix from the database
+getArticlesTagsSparseMatrix = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), justPushes = FALSE){
+  if (justPushes) {
+    whre = 'where ar.push_time is not null '
+  }
+  else{
+    whre = 'where ar.push_time is null '
+  }
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    whre = paste0(whre," and exists (select 1 from events e where ar.id = e.article_id and e.data_evento >= '",format(from,"%Y-%m-%d"),"')")
+    # Extracts articles versus tags table, with count of occurences  
+    articlesTags = dbGetQuery(con, paste0("select ar.id as ",'"articleId"',",coalesce(case when trim(tg.no_plural) = '' then '<NA>' else trim(tg.no_plural) end ,'<NA>') as",'"tagName"',",count(1)
+                                          from articles ar
+                                          left join articles_tags art on ar.id = art.article_id
+                                          left join tags tg on art.tag_id = tg.id ",whre,"
+                                          group by tg.no_plural, ar.id
+                                          order by ar.id desc, tg.no_plural desc"))
+  }
+  else{
+    # Extracts articles versus tags table, with count of occurences  
+    articlesTags = dbGetQuery(con, paste0("select ar.id as ",'"articleId"',",coalesce(case when trim(tg.no_plural) = '' then '<NA>' else trim(tg.no_plural) end ,'<NA>') as",'"tagName"',",count(1)
+                            from articles ar
+                            left join articles_tags art on ar.id = art.article_id
+                            left join tags tg on art.tag_id = tg.id ",whre,"
+                            group by tg.no_plural, ar.id
+                            order by ar.id desc, tg.no_plural desc"))    
+  }
+  
+  
+  tags = as.tibble(articlesTags) %>% select(tagName) %>% distinct(tagName) %>% arrange(-desc(tagName))
+  tags = add_column(tags, tagIndex = seq(nrow(tags)))
+  
+  articles = as.tibble(articlesTags) %>% select(articleId) %>% distinct(articleId) %>% arrange(desc(articleId))
+  articles = add_column(articles, articleIndex = seq(nrow(articles)))
+  
+  articlesTags = articlesTags %>% left_join(tags,by = "tagName" )
+  articlesTags = articlesTags %>% left_join(articles,by = "articleId" )
+  
+  articlesTagsSparseMatrix = sparseMatrix(i = articlesTags$articleIndex,
+                                           j = articlesTags$tagIndex,
+                                           x = articlesTags$count,
+                                           dims = c(length(articles$articleId),length(tags$tagName)),
+                                           dimnames = list(c(articles$articleId),c(tags$tagName)))
+  
+  # Converts table into matrix
+  #articlesTagsMatrix = spread(articlesTags,key = tagName,value = count, fill = 0)
+  #articlesTagsMatrix = arrange(articlesTagsMatrix,desc(id))
+  # Sets rownames on the DF and removes id column
+  #rownames(articlesTagsMatrix) = articlesTagsMatrix[,1]
+  #articlesTagsMatrix$id = NULL
+  
+  return(articlesTagsSparseMatrix)
+}
+
 # Retrieves max timestamp from events
 getEventsMaxTime = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y")){
   if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
@@ -125,6 +179,62 @@ getUsersArticlesMatrices = function(con, from = as.Date("01-01-1970", format = "
   
   return(list(usersArticlesMatrix        = usersArticlesMatrix,
               usersArticlesAvgTimeMatrix = usersArticlesAvgTimeMatrix))
+}
+
+
+getUsersArticlesSparseMatrices = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), withPushes = FALSE,eventsMaxTime){
+  # Extracts users versus articles table, with avverage age for each article  
+  if (withPushes) {
+    whre = ''
+  }
+  else{
+    whre = 'where a.push_time is null '
+  }
+  
+  if (from > as.Date("01-01-1970", format = "%d-%m-%Y")){
+    if (whre == ''){
+      whre = 'where '
+    }
+    else{
+      whre = paste0(whre,' and ')
+    }
+    whre = paste0(whre," e.data_evento >= '",format(from,"%Y-%m-%d"),"' ")
+  }
+  usersArticles = dbGetQuery(con, paste0('select u.email,
+                                         e.article_id as "articleId" ,
+                                         ((select max(extract(epoch from m.data_evento)) from events m) - avg(extract(epoch from e.data_evento)))/60/60/24 as "avgTime",
+                                         count(e.article_id) as "count"
+                                         from users u
+                                         inner join events e on u.email = e.email
+                                         inner join articles a on e.article_id = a.id 
+                                         ',whre,'
+                                         group by u.email,e.article_id,a.popularity'))    
+  
+  users = as.tibble(usersArticles) %>% select(email) %>% distinct(email) %>% arrange(-desc(email))
+  users = add_column(users, userIndex = seq(nrow(users)))
+  
+  articles = as.tibble(usersArticles) %>% select(articleId) %>% distinct(articleId) %>% arrange(desc(articleId))
+  articles = add_column(articles, articleIndex = seq(nrow(articles)))
+  
+  usersArticles = usersArticles %>% left_join(users,by = "email" )
+  usersArticles = usersArticles %>% left_join(articles,by = "articleId" )
+  
+  
+  usersArticlesSparseMatrix = sparseMatrix(i = usersArticles$articleIndex,
+                                           j = usersArticles$userIndex,
+                                           x = usersArticles$count,
+                                           dims = c(length(articles$articleId),length(users$email)),
+                                           dimnames = list(c(articles$articleId),c(users$email)))
+  
+  usersArticlesAvgTimeSparseMatrix = sparseMatrix(i = usersArticles$articleIndex,
+                                                  j = usersArticles$userIndex,
+                                                  x = usersArticles$avgTime,
+                                                  dims = c(length(articles$articleId),length(users$email)),
+                                                  dimnames = list(c(articles$articleId),c(users$email)))
+  
+
+  return(list(usersArticlesSparseMatrix  = usersArticlesSparseMatrix,
+              usersArticlesAvgTimeSparseMatrix = usersArticlesAvgTimeSparseMatrix))
 }
 
 getUsersArticlesPushM = function(con){
@@ -210,20 +320,35 @@ updateTagsNoPlural <- function(con, tags){
   return(dbExecute(con,updateStatement))
 }
 
-
-
-getTrainningData = function(con){
+getTrainningData = function(con){ 
   articlesTagsMatrix            = getArticlesTagsMatrix(con)
   articlesPopularityIndexVector = getArticlesPopularityIndexVector(con)
   usersArticlesMatrices         = getUsersArticlesMatrices(con)
+
   eventsMaxTime                 = getEventsMaxTime(con) 
-  
   articlesPopularityIndexVector      = setPopularityIndex(articlesPopularityIndexVector)
-  usersArticlesTimeDiffMatrix        = getUsersArticlesTimeDiffMatrix(eventsMaxTime,usersArticlesMatrices$usersArticlesAvgTimeMatrix)
   
+  usersArticlesTimeDiffMatrix        = getUsersArticlesTimeDiffMatrix(eventsMaxTime,usersArticlesMatrices$usersArticlesAvgTimeMatrix)
+
   trainningData = list(articlesTagsMatrix            = articlesTagsMatrix,
                        usersArticlesMatrix           = usersArticlesMatrices$usersArticlesMatrix,
                        usersArticlesTimeDiffMatrix   = usersArticlesTimeDiffMatrix,
+                       articlesPopularityIndexVector = articlesPopularityIndexVector) 
+  return(trainningData)
+}
+getTrainningSparseData = function(con){ 
+  eventsMaxTime                 = getEventsMaxTime(con) 
+  articlesTagsSparseMatrix      = getArticlesTagsSparseMatrix(con)
+  articlesPopularityIndexVector = getArticlesPopularityIndexVector(con)
+  usersArticlesSparseMatrices   = getUsersArticlesSparseMatrices(con,eventsMaxTime = eventsMaxTime)
+  
+  articlesPopularityIndexVector      = setPopularityIndex(articlesPopularityIndexVector)
+  usersArticlesTimeDiffSparseMatrix = usersArticlesSparseMatrices$usersArticlesAvgTimeSparseMatrix
+  #usersArticlesTimeDiffSparseMatrix  = getUsersArticlesTimeDiffSparseMatrix(eventsMaxTime,usersArticlesSparseMatrices$usersArticlesAvgTimeSparseMatrix)
+  
+  trainningData = list(articlesTagsMatrix            = articlesTagsSparseMatrix,
+                       usersArticlesMatrix           = usersArticlesSparseMatrices$usersArticlesSparseMatrix,
+                       usersArticlesTimeDiffMatrix   = usersArticlesTimeDiffSparseMatrix,
                        articlesPopularityIndexVector = articlesPopularityIndexVector) 
   return(trainningData)
 }
@@ -268,6 +393,11 @@ getPopularityIndex = function(articleAccesses){
 getUsersArticlesTimeDiffMatrix = function(eventsMaxTime, usersArticlesAvgTimeMatrix){
   usersArticlesTimeDiffMatrix = (eventsMaxTime - usersArticlesAvgTimeMatrix)/60/60/24
   return(usersArticlesTimeDiffMatrix)  
+}
+
+getUsersArticlesTimeDiffSparseMatrix = function(eventsMaxTime, usersArticlesAvgTimeSparseMatrix){
+  usersArticlesTimeDiffSparseMatrix = (eventsMaxTime - usersArticlesAvgTimeSparseMatrix)/60/60/24
+  return(usersArticlesTimeDiffSparseMatrix)  
 }
 
 writeClustersToDB = function(clusters, con){

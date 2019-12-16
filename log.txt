@@ -117,3 +117,75 @@
 2019-12-12 15:06:32 return(list(contentDistance = contentDistance
 2019-12-12 15:06:33 if (method == 'other') {
 2019-12-12 15:06:40 parameters = list(method = method,
+2019-12-13 16:35:51 behaviourDistanceTime = system.time({
+2019-12-13 16:39:55 contentDistanceTime = system.time({
+2019-12-13 16:41:43 mixedDistanceTime = system.time({
+2019-12-13 16:41:45 return(list(contentDistance = contentDistance
+2019-12-13 16:41:46 if (method == 'other') {
+2019-12-13 16:41:49 parameters = list(method = method,
+2019-12-13 16:51:40 behaviourDistanceTime = system.time({
+2019-12-13 16:53:33 behaviourDistanceTime = system.time({
+2019-12-13 16:57:35 contentDistanceTime = system.time({
+2019-12-13 16:59:16 mixedDistanceTime = system.time({
+2019-12-13 16:59:17 return(list(contentDistance = contentDistance
+2019-12-13 16:59:18 if (method == 'other') {
+2019-12-13 16:59:21 parameters = list(method = method,
+2019-12-15 14:28:34 behaviourDistanceTime = system.time({
+2019-12-15 15:16:25 behaviourDistanceTime = system.time({
+2019-12-15 15:21:38 contentDistanceTime = system.time({
+2019-12-15 15:23:26 mixedDistanceTime = system.time({
+2019-12-15 15:23:27 return(list(contentDistance = contentDistance
+2019-12-15 15:23:28 if (method == 'other') {
+2019-12-15 15:23:32 parameters = list(method = method,
+2019-12-15 19:01:24 behaviourDistanceTime = system.time({
+2019-12-15 19:06:40 contentDistanceTime = system.time({
+2019-12-15 19:08:24 mixedDistanceTime = system.time({
+2019-12-15 19:08:25 return(list(contentDistance = contentDistance
+2019-12-15 19:08:26 if (method == 'other') {
+2019-12-15 19:08:30 parameters = list(method = method,
+2019-12-16 12:51:42 behaviourDistanceTime = system.time({
+2019-12-16 12:52:03 contentDistanceTime = system.time({
+2019-12-16 12:52:18 mixedDistanceTime = system.time({
+2019-12-16 12:52:18 return(list(contentDistance = contentDistance
+2019-12-16 12:52:20 if (method == 'other') {
+2019-12-16 12:52:20 parameters = list(method = method,
+2019-12-16 15:07:35 behaviourDistanceTime = system.time({
+2019-12-16 15:08:04 contentDistanceTime = system.time({
+2019-12-16 15:08:20 mixedDistanceTime = system.time({
+2019-12-16 15:08:20 return(list(contentDistance = contentDistance
+2019-12-16 15:08:21 if (method == 'other') {
+2019-12-16 15:08:22 parameters = list(method = method,
+2019-12-16 15:08:34 behaviourDistanceTime = system.time({
+2019-12-16 15:09:39 behaviourDistanceTime = system.time({
+2019-12-16 15:09:57 contentDistanceTime = system.time({
+2019-12-16 15:10:11 mixedDistanceTime = system.time({
+2019-12-16 15:10:12 return(list(contentDistance = contentDistance
+2019-12-16 15:10:13 if (method == 'other') {
+2019-12-16 15:10:14 parameters = list(method = method,
+2019-12-16 15:10:31 behaviourDistanceTime = system.time({
+2019-12-16 15:11:31 behaviourDistanceTime = system.time({
+2019-12-16 15:11:50 contentDistanceTime = system.time({
+2019-12-16 15:12:04 mixedDistanceTime = system.time({
+2019-12-16 15:12:04 return(list(contentDistance = contentDistance
+2019-12-16 15:12:06 if (method == 'other') {
+2019-12-16 15:12:06 parameters = list(method = method,
+2019-12-16 15:25:58 behaviourDistanceTime = system.time({
+2019-12-16 15:26:20 contentDistanceTime = system.time({
+2019-12-16 15:26:36 mixedDistanceTime = system.time({
+2019-12-16 15:26:37 return(list(contentDistance = contentDistance
+2019-12-16 15:26:38 if (method == 'other') {
+2019-12-16 15:26:39 parameters = list(method = method,
+2019-12-16 15:26:56 behaviourDistanceTime = system.time({
+2019-12-16 15:32:23 contentDistanceTime = system.time({
+2019-12-16 15:49:37 behaviourDistanceTime = system.time({
+2019-12-16 15:49:59 contentDistanceTime = system.time({
+2019-12-16 15:50:14 mixedDistanceTime = system.time({
+2019-12-16 15:50:15 return(list(contentDistance = contentDistance
+2019-12-16 15:50:15 if (method == 'other') {
+2019-12-16 15:50:17 parameters = list(method = method,
+2019-12-16 15:50:21 behaviourDistanceTime = system.time({
+2019-12-16 15:50:39 contentDistanceTime = system.time({
+2019-12-16 15:51:39 mixedDistanceTime = system.time({
+2019-12-16 15:51:40 return(list(contentDistance = contentDistance
+2019-12-16 15:51:41 if (method == 'other') {
+2019-12-16 15:51:43 parameters = list(method = method,

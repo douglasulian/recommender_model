@@ -1,4 +1,4 @@
-schema                  = 'trainning6000'
+schema                  = 'private'
 dbUser                  = "cl-us-gzh"
 dbHost                  = "10.238.4.109"
 dbName                  = "cl-us-gzh"

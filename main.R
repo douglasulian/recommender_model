@@ -40,14 +40,23 @@ trainningConnection = getDataBaseConnection(schema = schema,
 # 
 
 trainningData = getTrainningData(trainningConnection)
+trainningSparseData = getTrainningSparseData(trainningConnection)
 
-result = executeModel(trainningData    = trainningData,
-               clusterMethod           = clusterMethod,
-               noClustersK             = noClustersK,
-               usersTimeDiffAlphaIndex = usersTimeDiffAlphaIndex,
-               mixedDistanceBetaIndex  = mixedDistanceBetaIndex,
-               forgCurveLambdaIndex    = forgCurveLambdaIndex,
-               tagsCutGamaIndex        = tagsCutGamaIndex)
+# result = executeModel(trainningData    = trainningData,
+#                clusterMethod           = clusterMethod,
+#                noClustersK             = noClustersK,
+#                usersTimeDiffAlphaIndex = usersTimeDiffAlphaIndex,
+#                mixedDistanceBetaIndex  = mixedDistanceBetaIndex,
+#                forgCurveLambdaIndex    = forgCurveLambdaIndex,
+#                tagsCutGamaIndex        = tagsCutGamaIndex)
+
+resultSparse = executeModel(trainningData    = trainningSparseData,
+                      clusterMethod           = clusterMethod,
+                      noClustersK             = noClustersK,
+                      usersTimeDiffAlphaIndex = usersTimeDiffAlphaIndex,
+                      mixedDistanceBetaIndex  = mixedDistanceBetaIndex,
+                      forgCurveLambdaIndex    = forgCurveLambdaIndex,
+                      tagsCutGamaIndex        = tagsCutGamaIndex)
 
 writeClustersToDB(result$clusters, trainningConnection)
 

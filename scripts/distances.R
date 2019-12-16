@@ -68,6 +68,59 @@ getDistances = function(trainningData,lambdaIndex, alphaIndex, betaIndex){
               usersTagsMatrix       = usersTagsMatrix))
 }
 
+getDistancesSparse = function(trainningData,lambdaIndex, alphaIndex, betaIndex){
+  parameters = list(alphaIndex = alphaIndex,
+                    betaIndex = betaIndex,
+                    lambdaIndex = lambdaIndex)
+  
+  n = ncol(trainningData$usersArticlesMatrix)
+  auxMatrix = matrix(data = rep(1,n*n),nrow = n)
+  auxMatrix[upper.tri(x = auxMatrix,diag = TRUE)] = 0
+  writeLog('behaviourDistanceTime = system.time({')
+  behaviourDistanceTime = system.time({
+    
+    # calculates behaviour distance
+    behaviourDistance = getJaccardDistance(usersArticlesMatrix           = trainningData$usersArticlesMatrix,
+                                           usersArticlesTimeDiffMatrix   = trainningData$usersArticlesTimeDiffMatrix,
+                                           articlesPopularityIndexVector = trainningData$articlesPopularityIndexVector,
+                                           alphaIndex = alphaIndex)
+    behaviourDistance = behaviourDistance * auxMatrix
+    rm(list = c('auxMatrix'))
+  })
+  writeLog('contentDistanceTime = system.time({')
+  gc()
+  
+  contentDistanceTime = system.time({
+    
+    # Applies forgetting curve over content (tags)
+    usersTagsMatrix = getUsersTagsMatrix(usersArticlesMatrix          = trainningData$usersArticlesMatrix,
+                                         articlesTagsMatrix           = trainningData$articlesTagsMatrix,
+                                         usersArticlesTimeDiffMatrix  = trainningData$usersArticlesTimeDiffMatrix,
+                                         lambdaIndex                  = lambdaIndex)
+    # Calculates content distance
+    contentDistance = getCosineDistance(usersTagsMatrix = usersTagsMatrix)
+  })
+  writeLog('mixedDistanceTime = system.time({')
+  gc()
+  
+  mixedDistanceTime = system.time({
+    
+    mixedDistance = betaIndex*behaviourDistance + contentDistance * (1 - betaIndex)
+  })
+  writeLog('return(list(contentDistance = contentDistance')
+  gc()
+  
+  return(list(contentDistance       = contentDistance, 
+              behaviourDistance     = behaviourDistance,
+              mixedDistance         = mixedDistance,
+              contentDistanceTime   = contentDistanceTime, 
+              behaviourDistanceTime = behaviourDistanceTime,
+              mixedDistanceTime     = mixedDistanceTime,
+              parameters            = parameters, 
+              usersTagsMatrix       = usersTagsMatrix))
+}
+
+
 getJaccardDistance <- function(usersArticlesMatrix,
                                usersArticlesTimeDiffMatrix,
                                articlesPopularityIndexVector,
