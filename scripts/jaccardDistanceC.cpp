@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 using namespace Rcpp;
+
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::export]]
 NumericMatrix getJaccardDistancesC(NumericMatrix jaccard, 

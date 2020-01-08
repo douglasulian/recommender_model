@@ -6,9 +6,9 @@ if (length(new.packages)) install.packages(new.packages)
 library(dplyr)
 
 #### Sources ####
-debugSource(fileName = 'scripts/util.R')
-debugSource(fileName = 'scripts/distances.R')
-debugSource(fileName = 'scripts/cluster.R')
+#debugSource(fileName = 'scripts/util.R')
+#debugSource(fileName = 'scripts/distances.R')
+#debugSource(fileName = 'scripts/cluster.R')
 #### Code ####
 
 
@@ -173,7 +173,7 @@ executeModelSparse = function(trainningData,
     articlesCutZetaIndex = round(articlesCutZetaIndex)
   }
   
-  distances      = getDistances(trainningData, lambdaIndex = forgCurveLambdaIndex, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex)
+  distances      = getDistancesSparse(trainningData, lambdaIndex = forgCurveLambdaIndex, alphaIndex = usersTimeDiffAlphaIndex, betaIndex = mixedDistanceBetaIndex)
   
   printValue(parameter = 'distances'              , value = 'NEW'   )      
   

@@ -8,6 +8,8 @@ library(RPostgreSQL)
 library(dplyr)
 library(tidyr)
 
+debugSource("scripts/util.R")
+
 #### Code ####
 clearConnections = function(){
   
@@ -182,7 +184,7 @@ getUsersArticlesMatrices = function(con, from = as.Date("01-01-1970", format = "
 }
 
 
-getUsersArticlesSparseMatrices = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), withPushes = FALSE,eventsMaxTime){
+getUsersArticlesSparseMatrices = function(con, from = as.Date("01-01-1970", format = "%d-%m-%Y"), withPushes = FALSE, alphaIndex){
   # Extracts users versus articles table, with avverage age for each article  
   if (withPushes) {
     whre = ''
@@ -219,6 +221,7 @@ getUsersArticlesSparseMatrices = function(con, from = as.Date("01-01-1970", form
   usersArticles = usersArticles %>% left_join(users,by = "email" )
   usersArticles = usersArticles %>% left_join(articles,by = "articleId" )
   
+  usersArticles$avgTimeAtten = getAttenCoeff(usersArticles$avgTime,alphaIndex)
   
   usersArticlesSparseMatrix = sparseMatrix(i = usersArticles$articleIndex,
                                            j = usersArticles$userIndex,
@@ -232,9 +235,18 @@ getUsersArticlesSparseMatrices = function(con, from = as.Date("01-01-1970", form
                                                   dims = c(length(articles$articleId),length(users$email)),
                                                   dimnames = list(c(articles$articleId),c(users$email)))
   
-
-  return(list(usersArticlesSparseMatrix  = usersArticlesSparseMatrix,
-              usersArticlesAvgTimeSparseMatrix = usersArticlesAvgTimeSparseMatrix))
+  usersArticlesAttenCoeffMatrix = sparseMatrix(i = usersArticles$articleIndex,
+                                               j = usersArticles$userIndex,
+                                               x = usersArticles$avgTimeAtten,
+                                               dims = c(length(articles$articleId),length(users$email)),
+                                               dimnames = list(c(articles$articleId),c(users$email)))
+  
+  
+  return(list(usersArticlesSparseMatrix        = usersArticlesSparseMatrix,
+              usersArticlesAvgTimeSparseMatrix = usersArticlesAvgTimeSparseMatrix,
+              usersArticlesAttenCoeffMatrix    = usersArticlesAttenCoeffMatrix,
+              usersArticles                    = usersArticles,
+              articles                         = articles))
 }
 
 getUsersArticlesPushM = function(con){
@@ -326,30 +338,34 @@ getTrainningData = function(con){
   usersArticlesMatrices         = getUsersArticlesMatrices(con)
 
   eventsMaxTime                 = getEventsMaxTime(con) 
-  articlesPopularityIndexVector      = setPopularityIndex(articlesPopularityIndexVector)
+  articlesPopularityIndexVector = setPopularityIndex(articlesPopularityIndexVector)
   
-  usersArticlesTimeDiffMatrix        = getUsersArticlesTimeDiffMatrix(eventsMaxTime,usersArticlesMatrices$usersArticlesAvgTimeMatrix)
+  usersArticlesTimeDiffMatrix   = getUsersArticlesTimeDiffMatrix(eventsMaxTime,usersArticlesMatrices$usersArticlesAvgTimeMatrix)
 
   trainningData = list(articlesTagsMatrix            = articlesTagsMatrix,
                        usersArticlesMatrix           = usersArticlesMatrices$usersArticlesMatrix,
                        usersArticlesTimeDiffMatrix   = usersArticlesTimeDiffMatrix,
-                       articlesPopularityIndexVector = articlesPopularityIndexVector) 
+                       articlesPopularityIndexVector = articlesPopularityIndexVector,
+                       usersArticlesAvgTimeMatrix    = usersArticlesMatrices$usersArticlesAvgTimeMatrix) 
   return(trainningData)
 }
-getTrainningSparseData = function(con){ 
-  eventsMaxTime                 = getEventsMaxTime(con) 
-  articlesTagsSparseMatrix      = getArticlesTagsSparseMatrix(con)
-  articlesPopularityIndexVector = getArticlesPopularityIndexVector(con)
-  usersArticlesSparseMatrices   = getUsersArticlesSparseMatrices(con,eventsMaxTime = eventsMaxTime)
+getTrainningSparseData = function(con, alphaIndex){ 
+  eventsMaxTime                     = getEventsMaxTime(con) 
+  articlesTagsSparseMatrix          = getArticlesTagsSparseMatrix(con)
+  articlesPopularityIndexVector     = getArticlesPopularityIndexVector(con)
+  usersArticlesSparseMatrices       = getUsersArticlesSparseMatrices(con, alphaIndex = alphaIndex)
+  usersArticlesTimeDiffSparseMatrix = usersArticlesSparseMatrices$usersArticlesAvgTimeSparseMatrix
   
   articlesPopularityIndexVector      = setPopularityIndex(articlesPopularityIndexVector)
-  usersArticlesTimeDiffSparseMatrix = usersArticlesSparseMatrices$usersArticlesAvgTimeSparseMatrix
   #usersArticlesTimeDiffSparseMatrix  = getUsersArticlesTimeDiffSparseMatrix(eventsMaxTime,usersArticlesSparseMatrices$usersArticlesAvgTimeSparseMatrix)
   
   trainningData = list(articlesTagsMatrix            = articlesTagsSparseMatrix,
                        usersArticlesMatrix           = usersArticlesSparseMatrices$usersArticlesSparseMatrix,
                        usersArticlesTimeDiffMatrix   = usersArticlesTimeDiffSparseMatrix,
-                       articlesPopularityIndexVector = articlesPopularityIndexVector) 
+                       usersArticlesAttenCoeffMatrix = usersArticlesSparseMatrices$usersArticlesAttenCoeffMatrix,
+                       articlesPopularityIndexVector = articlesPopularityIndexVector,
+                       usersArticles                 = usersArticlesSparseMatrices$usersArticles,
+                       articles                      = usersArticlesSparseMatrices$articles) 
   return(trainningData)
 }
 getTrainningDataFrom = function(con,from){

@@ -98,7 +98,10 @@ getHierarchicalCluster = function(distance, method ,k){
   
   if (class(distance) == 'matrix') {
     distance = as.dist(distance)  
+  } else if (class(distance) == 'dtCMatrix'){
+    distance = as.dist(as.matrix(distance))
   }
+    
   
   clusterTime = system.time({
     

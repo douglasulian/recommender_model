@@ -1,8 +1,9 @@
-list.of.packages = c('mailR')
+list.of.packages = c('mailR','tibble')
 new.packages = list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if (length(new.packages)) install.packages(new.packages)
 
 library(mailR)
+library(tibble)
 
 # Write matrices to files
 writeCsv = function(usersArticlesMatrix,articlesTagsMatrix,usersArticlesForgCurvedMatrix,usersTagsMatrix,usersUsersContentDissimilarityMatrix){
@@ -232,4 +233,9 @@ getNoCores = function(){
     noCores = detectCores(all.tests = FALSE, logical = TRUE) - 2
   }
   return(noCores)
+}
+
+getAttenCoeff = function(alpha, ti){
+  # return(exp(-alpha*ti)/sqrt(log1p(mi)))
+  return(exp(-alpha*ti))
 }
