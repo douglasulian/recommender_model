@@ -53,9 +53,9 @@ trainningConnection = getDataBaseConnection(schema = schema,
 #                       forgCurveLambdaIndex    = forgCurveLambdaIndex,
 #                       tagsCutGamaIndex        = tagsCutGamaIndex)
 
-trainningSparseData = getTrainningSparseData(trainningConnection,alphaIndex = usersTimeDiffAlphaIndex)
-#save(list = c('trainningSparseData'),file = 'trainningSparseData2000.RData')
-#load("~/recommender_model/trainningSparseDataPrivate.RData")
+#trainningSparseData = getTrainningSparseData(trainningConnection,alphaIndex = usersTimeDiffAlphaIndex)
+#save(list = c('trainningSparseData'),file = 'trainningSparseData200.RData')
+load("~/recommender_model/trainningSparseDataPrivate.RData")
 writeLog('')
 writeLog('')
 writeLog('')
@@ -139,21 +139,29 @@ writeLog(         'behaviourDistanceTime                  = system.time({')
   
   gc()
   
-  doParallel::registerDoParallel(cores = noCores)
-  
-  parallelResults = foreach(index = indexes,.init = jaccard, .combine = "+") %dopar% {
-    
-    getJaccardDistancesCSparse(rowIndexes = as.integer(index[,1]),
-                               colIndexes = as.integer(index[,2]),
-                               usersArticlesMatrix = usersArticlesMatrix,
-                               usersArticlesAttenCoeffMatrix = usersArticlesAttenCoeffMatrix,
-                               articlesPopularityIndexVector = articlesPopularityIndexVector[,3])
-    
-  }
-  parallelResults[tril(parallelResults == 0,k = -1)] = 1
-  parallelResults[parallelResults==2] = 0
-  
-  result = parallelResults
+  #doParallel::registerDoParallel(cores = noCores)
+  #
+  #parallelResults = foreach(index = indexes,.init = jaccard, .combine = "+") %dopar% {
+  #  
+  #  getJaccardDistancesCSparse(rowIndexes = as.integer(index[,1]),
+  #                             colIndexes = as.integer(index[,2]),
+  #                             usersArticlesMatrix = usersArticlesMatrix,
+  #                             usersArticlesAttenCoeffMatrix = usersArticlesAttenCoeffMatrix,
+  #                             articlesPopularityIndexVector = articlesPopularityIndexVector[,3])
+  #  
+  #}
+  #parallelResults[tril(parallelResults == 0,k = -1)] = 1
+  #parallelResults[parallelResults==2] = 0
+  #
+  #result = parallelResults
+  armaCP = armaCrossProd(usersArticlesMatrix)
+  result = getJaccardDistancesCSparseSingleCore(crossProd = armaCP,
+                                                usersArticlesMatrix = usersArticlesMatrix,
+                                                usersArticlesAttenCoeffMatrix = usersArticlesAttenCoeffMatrix,
+                                                articlesPopularityIndexVector = articlesPopularityIndexVector[,3])
+  result[tril(result == 0,k = -1)] = 1
+  result[result==2] = 0
+  result = tril(result,k=-1)
   
   writeLog(paste0('sum(result)                            = ',sum(result)))
   writeLog(paste0('ncol(result)                           = ',ncol(result)))
