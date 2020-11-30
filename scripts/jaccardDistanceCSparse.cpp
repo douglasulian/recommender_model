@@ -24,7 +24,6 @@ NumericMatrix getJaccardDistancesC(NumericMatrix jaccard,
                                    NumericMatrix usersArticlesMatrix,
                                    NumericMatrix usersArticlesAttenCoeffMatrix,
                                    NumericVector articlesPopularityIndexVector){
-  int times = 0;
   int userAidx = 0;
   int userBidx = 0;
   int nrow = usersArticlesMatrix.nrow();
@@ -39,11 +38,13 @@ NumericMatrix getJaccardDistancesC(NumericMatrix jaccard,
     intersectionSum = 0;
     double diff = 0.0;
     for (int j = 0; j < nrow; j++){
-      times++;
       if ((usersArticlesMatrix(j,userAidx)!=0)&&(usersArticlesMatrix(j,userBidx)!=0)){
         diff = usersArticlesAttenCoeffMatrix(j,userAidx) - usersArticlesAttenCoeffMatrix(j,userBidx);
-        if (diff > 0){
+        if (diff < 0){
           usersArticlesTimeExpVector(k) += (usersArticlesAttenCoeffMatrix(j,userAidx)/usersArticlesAttenCoeffMatrix(j,userBidx))*articlesPopularityIndexVector(j);
+          Rcout << "usersArticlesAttenCoeffMatrix(j,userAidx " << usersArticlesAttenCoeffMatrix(j,userAidx) << std::endl;
+          Rcout << "usersArticlesAttenCoeffMatrix(j,userBidx) " << usersArticlesAttenCoeffMatrix(j,userBidx) << std::endl;
+          Rcout << "articlesPopularityIndexVector(j) " << articlesPopularityIndexVector(j) << std::endl;
         }
         else{
           usersArticlesTimeExpVector(k) += (usersArticlesAttenCoeffMatrix(j,userBidx)/usersArticlesAttenCoeffMatrix(j,userAidx))*articlesPopularityIndexVector(j);
@@ -54,8 +55,12 @@ NumericMatrix getJaccardDistancesC(NumericMatrix jaccard,
       }
     }
     jaccard(userAidx,userBidx) = 1-usersArticlesTimeExpVector(k)/unionSum;
+    Rcout << "userAidx " << userAidx << std::endl;
+    Rcout << "userBidx " << userBidx << std::endl;
+    Rcout << "usersArticlesTimeExpVector(k) " << usersArticlesTimeExpVector(k) << std::endl;
+    Rcout << "unionSum " << unionSum << std::endl;
   }
-  Rcout << "Times is " << times << std::endl;
+  
   return jaccard;
 }
 // [[Rcpp::export]]
