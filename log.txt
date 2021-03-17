@@ -1,191 +1,181 @@
-2018-09-10 11:27:22 behaviourDistanceTime = system.time({
-2018-09-10 11:27:44 contentDistanceTime = system.time({
-2018-09-10 11:28:21 mixedDistanceTime = system.time({
-2018-09-10 11:28:22 return(list(contentDistance = contentDistance
-2018-09-10 11:28:23 if (method == 'ward.D') {
-2018-09-10 11:28:23 parameters = list(method = method,
-2018-09-10 11:28:23 calculating solution
-2018-09-10 11:29:14 behaviourDistanceTime = system.time({
-2018-09-10 11:29:38 contentDistanceTime = system.time({
-2018-09-10 11:30:19 mixedDistanceTime = system.time({
-2018-09-10 11:30:19 return(list(contentDistance = contentDistance
-2018-09-10 11:30:20 if (method == 'ward.D') {
-2018-09-10 11:30:21 parameters = list(method = method,
-2018-09-10 11:30:21 calculating solution
-2018-09-10 11:37:17 behaviourDistanceTime = system.time({
-2018-09-10 11:37:42 contentDistanceTime = system.time({
-2018-09-10 11:38:24 mixedDistanceTime = system.time({
-2018-09-10 11:38:25 return(list(contentDistance = contentDistance
-2018-09-10 11:38:26 if (method == 'ward.D') {
-2018-09-10 11:38:27 parameters = list(method = method,
-2018-09-10 11:38:27 calculating solution
-2018-09-10 11:46:26 behaviourDistanceTime = system.time({
-2018-09-10 11:46:54 contentDistanceTime = system.time({
-2018-09-10 11:47:34 mixedDistanceTime = system.time({
-2018-09-10 11:47:35 return(list(contentDistance = contentDistance
-2018-09-10 11:50:38 behaviourDistanceTime = system.time({
-2018-09-10 11:51:05 contentDistanceTime = system.time({
-2018-09-10 11:51:49 mixedDistanceTime = system.time({
-2018-09-10 11:51:49 return(list(contentDistance = contentDistance
-2018-09-10 11:57:52 behaviourDistanceTime = system.time({
-2018-09-10 11:58:19 contentDistanceTime = system.time({
-2018-09-10 11:59:01 mixedDistanceTime = system.time({
-2018-09-10 11:59:02 return(list(contentDistance = contentDistance
-2018-09-10 11:59:03 if (method == 'ward.D') {
-2018-09-10 11:59:04 parameters = list(method = method,
-2018-09-10 12:02:04 behaviourDistanceTime = system.time({
-2018-09-10 12:02:30 contentDistanceTime = system.time({
-2018-09-10 12:03:14 mixedDistanceTime = system.time({
-2018-09-10 12:03:15 return(list(contentDistance = contentDistance
-2018-09-10 12:03:16 if (method == 'ward.D') {
-2018-09-10 12:03:18 parameters = list(method = method,
-2018-09-10 12:05:32 behaviourDistanceTime = system.time({
-2018-09-10 12:05:59 contentDistanceTime = system.time({
-2018-09-10 12:06:45 mixedDistanceTime = system.time({
-2018-09-10 12:06:45 return(list(contentDistance = contentDistance
-2018-09-10 12:06:46 if (method == 'ward.D') {
-2018-09-10 12:06:47 parameters = list(method = method,
-2018-09-10 12:09:04 behaviourDistanceTime = system.time({
-2018-09-10 12:09:31 contentDistanceTime = system.time({
-2018-09-10 12:10:16 mixedDistanceTime = system.time({
-2018-09-10 12:10:18 return(list(contentDistance = contentDistance
-2018-09-10 12:10:18 if (method == 'ward.D') {
-2018-09-10 12:10:20 parameters = list(method = method,
-2018-09-10 12:11:38 behaviourDistanceTime = system.time({
-2018-09-10 12:12:03 contentDistanceTime = system.time({
-2018-09-10 12:12:50 mixedDistanceTime = system.time({
-2018-09-10 12:12:50 return(list(contentDistance = contentDistance
-2018-09-10 12:12:51 if (method == 'ward.D') {
-2018-09-10 12:12:53 parameters = list(method = method,
-2018-09-10 12:14:21 behaviourDistanceTime = system.time({
-2018-09-10 12:14:47 contentDistanceTime = system.time({
-2018-09-10 12:15:31 mixedDistanceTime = system.time({
-2018-09-10 12:15:32 return(list(contentDistance = contentDistance
-2018-09-10 12:15:33 if (method == 'ward.D') {
-2018-09-10 12:15:35 parameters = list(method = method,
-2018-09-10 12:18:11 behaviourDistanceTime = system.time({
-2018-09-10 12:18:36 contentDistanceTime = system.time({
-2018-09-10 12:19:19 mixedDistanceTime = system.time({
-2018-09-10 12:19:20 return(list(contentDistance = contentDistance
-2018-09-10 12:19:21 if (method == 'ward.D') {
-2018-09-10 12:19:22 parameters = list(method = method,
-2018-09-10 17:14:17 behaviourDistanceTime = system.time({
-2018-09-10 17:14:41 contentDistanceTime = system.time({
-2018-09-10 17:15:20 mixedDistanceTime = system.time({
-2018-09-10 17:15:21 return(list(contentDistance = contentDistance
-2018-09-10 17:15:22 if (method == 'ward.D') {
-2018-09-10 17:15:24 parameters = list(method = method,
-2018-09-10 17:33:59 behaviourDistanceTime = system.time({
-2018-09-10 17:34:22 contentDistanceTime = system.time({
-2018-09-10 17:35:01 mixedDistanceTime = system.time({
-2018-09-10 17:35:02 return(list(contentDistance = contentDistance
-2018-09-10 17:35:03 if (method == 'ward.D') {
-2018-09-10 17:35:04 parameters = list(method = method,
-2018-09-10 17:48:14 behaviourDistanceTime = system.time({
-2018-09-10 18:03:01 contentDistanceTime = system.time({
-2018-09-10 18:14:20 mixedDistanceTime = system.time({
-2018-09-10 18:14:22 return(list(contentDistance = contentDistance
-2018-09-10 18:14:24 if (method == 'ward.D') {
-2018-09-10 18:14:32 parameters = list(method = method,
-2019-12-12 13:19:59 behaviourDistanceTime = system.time({
-2019-12-12 13:28:44 contentDistanceTime = system.time({
-2019-12-12 13:32:28 mixedDistanceTime = system.time({
-2019-12-12 13:32:29 return(list(contentDistance = contentDistance
-2019-12-12 13:38:01 behaviourDistanceTime = system.time({
-2019-12-12 13:44:52 contentDistanceTime = system.time({
-2019-12-12 13:47:24 mixedDistanceTime = system.time({
-2019-12-12 13:47:26 return(list(contentDistance = contentDistance
-2019-12-12 13:56:12 behaviourDistanceTime = system.time({
-2019-12-12 14:03:51 contentDistanceTime = system.time({
-2019-12-12 14:06:54 mixedDistanceTime = system.time({
-2019-12-12 14:06:56 return(list(contentDistance = contentDistance
-2019-12-12 14:09:48 behaviourDistanceTime = system.time({
-2019-12-12 14:16:39 contentDistanceTime = system.time({
-2019-12-12 14:19:29 mixedDistanceTime = system.time({
-2019-12-12 14:19:32 return(list(contentDistance = contentDistance
-2019-12-12 14:27:42 behaviourDistanceTime = system.time({
-2019-12-12 14:35:02 contentDistanceTime = system.time({
-2019-12-12 14:37:51 behaviourDistanceTime = system.time({
-2019-12-12 14:43:02 contentDistanceTime = system.time({
-2019-12-12 14:45:36 mixedDistanceTime = system.time({
-2019-12-12 14:45:37 return(list(contentDistance = contentDistance
-2019-12-12 14:45:38 if (method == 'other') {
-2019-12-12 14:45:45 parameters = list(method = method,
-2019-12-12 14:59:23 behaviourDistanceTime = system.time({
-2019-12-12 15:04:19 contentDistanceTime = system.time({
-2019-12-12 15:06:31 mixedDistanceTime = system.time({
-2019-12-12 15:06:32 return(list(contentDistance = contentDistance
-2019-12-12 15:06:33 if (method == 'other') {
-2019-12-12 15:06:40 parameters = list(method = method,
-2019-12-13 16:35:51 behaviourDistanceTime = system.time({
-2019-12-13 16:39:55 contentDistanceTime = system.time({
-2019-12-13 16:41:43 mixedDistanceTime = system.time({
-2019-12-13 16:41:45 return(list(contentDistance = contentDistance
-2019-12-13 16:41:46 if (method == 'other') {
-2019-12-13 16:41:49 parameters = list(method = method,
-2019-12-13 16:51:40 behaviourDistanceTime = system.time({
-2019-12-13 16:53:33 behaviourDistanceTime = system.time({
-2019-12-13 16:57:35 contentDistanceTime = system.time({
-2019-12-13 16:59:16 mixedDistanceTime = system.time({
-2019-12-13 16:59:17 return(list(contentDistance = contentDistance
-2019-12-13 16:59:18 if (method == 'other') {
-2019-12-13 16:59:21 parameters = list(method = method,
-2019-12-15 14:28:34 behaviourDistanceTime = system.time({
-2019-12-15 15:16:25 behaviourDistanceTime = system.time({
-2019-12-15 15:21:38 contentDistanceTime = system.time({
-2019-12-15 15:23:26 mixedDistanceTime = system.time({
-2019-12-15 15:23:27 return(list(contentDistance = contentDistance
-2019-12-15 15:23:28 if (method == 'other') {
-2019-12-15 15:23:32 parameters = list(method = method,
-2019-12-15 19:01:24 behaviourDistanceTime = system.time({
-2019-12-15 19:06:40 contentDistanceTime = system.time({
-2019-12-15 19:08:24 mixedDistanceTime = system.time({
-2019-12-15 19:08:25 return(list(contentDistance = contentDistance
-2019-12-15 19:08:26 if (method == 'other') {
-2019-12-15 19:08:30 parameters = list(method = method,
-2019-12-16 12:51:42 behaviourDistanceTime = system.time({
-2019-12-16 12:52:03 contentDistanceTime = system.time({
-2019-12-16 12:52:18 mixedDistanceTime = system.time({
-2019-12-16 12:52:18 return(list(contentDistance = contentDistance
-2019-12-16 12:52:20 if (method == 'other') {
-2019-12-16 12:52:20 parameters = list(method = method,
-2019-12-16 15:07:35 behaviourDistanceTime = system.time({
-2019-12-16 15:08:04 contentDistanceTime = system.time({
-2019-12-16 15:08:20 mixedDistanceTime = system.time({
-2019-12-16 15:08:20 return(list(contentDistance = contentDistance
-2019-12-16 15:08:21 if (method == 'other') {
-2019-12-16 15:08:22 parameters = list(method = method,
-2019-12-16 15:08:34 behaviourDistanceTime = system.time({
-2019-12-16 15:09:39 behaviourDistanceTime = system.time({
-2019-12-16 15:09:57 contentDistanceTime = system.time({
-2019-12-16 15:10:11 mixedDistanceTime = system.time({
-2019-12-16 15:10:12 return(list(contentDistance = contentDistance
-2019-12-16 15:10:13 if (method == 'other') {
-2019-12-16 15:10:14 parameters = list(method = method,
-2019-12-16 15:10:31 behaviourDistanceTime = system.time({
-2019-12-16 15:11:31 behaviourDistanceTime = system.time({
-2019-12-16 15:11:50 contentDistanceTime = system.time({
-2019-12-16 15:12:04 mixedDistanceTime = system.time({
-2019-12-16 15:12:04 return(list(contentDistance = contentDistance
-2019-12-16 15:12:06 if (method == 'other') {
-2019-12-16 15:12:06 parameters = list(method = method,
-2019-12-16 15:25:58 behaviourDistanceTime = system.time({
-2019-12-16 15:26:20 contentDistanceTime = system.time({
-2019-12-16 15:26:36 mixedDistanceTime = system.time({
-2019-12-16 15:26:37 return(list(contentDistance = contentDistance
-2019-12-16 15:26:38 if (method == 'other') {
-2019-12-16 15:26:39 parameters = list(method = method,
-2019-12-16 15:26:56 behaviourDistanceTime = system.time({
-2019-12-16 15:32:23 contentDistanceTime = system.time({
-2019-12-16 15:49:37 behaviourDistanceTime = system.time({
-2019-12-16 15:49:59 contentDistanceTime = system.time({
-2019-12-16 15:50:14 mixedDistanceTime = system.time({
-2019-12-16 15:50:15 return(list(contentDistance = contentDistance
-2019-12-16 15:50:15 if (method == 'other') {
-2019-12-16 15:50:17 parameters = list(method = method,
-2019-12-16 15:50:21 behaviourDistanceTime = system.time({
-2019-12-16 15:50:39 contentDistanceTime = system.time({
-2019-12-16 15:51:39 mixedDistanceTime = system.time({
-2019-12-16 15:51:40 return(list(contentDistance = contentDistance
-2019-12-16 15:51:41 if (method == 'other') {
-2019-12-16 15:51:43 parameters = list(method = method,
+2019-12-23 18:04:00 
+2019-12-23 18:04:00 
+2019-12-23 18:04:00 
+2019-12-23 18:04:00 SPARSEEEEEEEE
+2019-12-23 18:04:00 behaviourDistanceTime                  = system.time({
+2019-12-23 18:52:15 
+2019-12-23 18:52:15 
+2019-12-23 18:52:15 
+2019-12-23 18:52:15 SPARSEEEEEEEE
+2019-12-23 18:52:15 behaviourDistanceTime                  = system.time({
+2019-12-23 18:58:42 
+2019-12-23 18:58:42 
+2019-12-23 18:58:42 
+2019-12-23 18:58:42 SPARSEEEEEEEE
+2019-12-23 18:58:42 behaviourDistanceTime                  = system.time({
+2019-12-23 19:04:31 
+2019-12-23 19:04:31 
+2019-12-23 19:04:31 
+2019-12-23 19:04:31 SPARSEEEEEEEE
+2019-12-23 19:05:27 
+2019-12-23 19:05:27 
+2019-12-23 19:05:27 
+2019-12-23 19:05:27 SPARSEEEEEEEE
+2019-12-23 19:08:44 behaviourDistanceTime                  = system.time({
+2019-12-23 19:22:50 
+2019-12-23 19:22:50 
+2019-12-23 19:22:50 
+2019-12-23 19:22:50 SPARSEEEEEEEE
+2019-12-23 19:22:58 behaviourDistanceTime                  = system.time({
+2019-12-23 19:34:43 sum(jaccard)                           = 0
+2019-12-23 19:34:43 sum(usersArticlesMatrix)               = 18
+2019-12-23 19:34:43 sum(usersArticlesAttenCoeffMatrix)     = 80
+2019-12-23 19:34:43 sum(articlesPopularityIndexVector[,3]) = 8
+2019-12-23 19:34:43 rownames(usersArticlesMatrix)[2]       = a2
+2019-12-23 19:34:43 rownames(usersArticlesMatrix)[nrow-2]  = a6
+2019-12-23 19:34:43 colnames(usersArticlesMatrix)[2]       = B
+2019-12-23 19:34:43 colnames(usersArticlesMatrix)[nrow-2]  = H
+2019-12-23 19:34:43 sum(result)                            = 39.05
+2019-12-23 19:34:43 ncol(result)                           = 10
+2019-12-23 19:34:43 nrow(result)                           = 10
+2019-12-23 19:34:43 result[1,2]                            = 0
+2019-12-23 19:34:44 sum(jaccard)                           = 0
+2019-12-23 19:34:44 sum(usersArticlesMatrix)               = 18
+2019-12-23 19:34:44 sum(usersArticlesAttenCoeffMatrix)     = 80
+2019-12-23 19:34:44 sum(articlesPopularityIndexVector[,3]) = 8
+2019-12-23 19:34:44 rownames(usersArticlesMatrix)[2]       = a2
+2019-12-23 19:34:44 rownames(usersArticlesMatrix)[nrow-2]  = a6
+2019-12-23 19:34:44 colnames(usersArticlesMatrix)[2]       = B
+2019-12-23 19:34:44 colnames(usersArticlesMatrix)[nrow-2]  = H
+2019-12-23 19:34:44 sum(result)                            = 39.05
+2019-12-23 19:34:44 ncol(result)                           = 10
+2019-12-23 19:34:44 nrow(result)                           = 10
+2019-12-23 19:34:44 result[1,2]                            = 0
+2019-12-23 19:36:26 
+2019-12-23 19:36:26 
+2019-12-23 19:36:26 
+2019-12-23 19:36:26 SPARSEEEEEEEE
+2019-12-23 19:36:26 behaviourDistanceTime                  = system.time({
+2019-12-23 19:48:51 
+2019-12-23 19:48:51 
+2019-12-23 19:48:51 
+2019-12-23 19:48:51 SPARSEEEEEEEE
+2019-12-23 19:48:52 behaviourDistanceTime                  = system.time({
+2019-12-24 12:51:39 
+2019-12-24 12:51:39 
+2019-12-24 12:51:39 
+2019-12-24 12:51:39 SPARSEEEEEEEE
+2019-12-24 12:51:39 behaviourDistanceTime                  = system.time({
+2020-01-06 16:57:38 
+2020-01-06 16:57:38 
+2020-01-06 16:57:38 
+2020-01-06 16:57:38 SPARSEEEEEEEE
+2020-01-06 16:57:38 behaviourDistanceTime                  = system.time({
+2020-01-06 16:57:39 sum(jaccard)                           = 0
+2020-01-06 16:57:39 sum(usersArticlesMatrix)               = 64505
+2020-01-06 16:57:39 sum(usersArticlesAttenCoeffMatrix)     = 2566.00047475042
+2020-01-06 16:57:39 sum(articlesPopularityIndexVector[,3]) = 10994.1605394498
+2020-01-06 16:57:39 rownames(usersArticlesMatrix)[2]       = 59d4e4f262365a76f645fca7
+2020-01-06 16:57:39 rownames(usersArticlesMatrix)[nrow-2]  = 56bbc7e9c9c4efb59d09cee4
+2020-01-06 16:57:39 colnames(usersArticlesMatrix)[2]       = a.santiagoagostini@hotmail.com
+2020-01-06 16:57:39 colnames(usersArticlesMatrix)[nrow-2]  = zeniotarrago@ig.com.br
+2020-01-06 16:57:53 sum(result)                            = -1911720968.67513
+2020-01-06 16:57:53 ncol(result)                           = 1609
+2020-01-06 16:57:53 nrow(result)                           = 1609
+2020-01-06 16:57:53 result[1,2]                            = 0
+2020-01-06 16:57:54 behaviourDistance                      = -1911720968.67513
+2020-01-06 16:57:54 behaviourDistance                      = -1911720968.67513
+2020-01-06 16:57:54 contentDistanceTime                    = system.time({
+2020-01-06 16:59:00 sum(usersTagsMatrix)                   = 318521.96867245
+2020-01-06 16:59:03 contentDistance                        = 1129176.7196571
+2020-01-06 16:59:03 mixedDistanceTime                      = system.time({
+2020-01-06 16:59:05 return(list(contentDistance            = contentDistance
+2020-01-06 16:59:05 if (method == 'other') {
+2020-01-06 16:59:06 parameters = list(method = method,
+2020-01-06 17:20:31 
+2020-01-06 17:20:31 
+2020-01-06 17:20:31 
+2020-01-06 17:20:31 SPARSEEEEEEEE
+2020-01-06 17:20:31 behaviourDistanceTime                  = system.time({
+2020-01-08 16:34:37 sum(jaccard)                           = 0
+2020-01-08 16:34:37 sum(usersArticlesMatrix)               = 18
+2020-01-08 16:34:37 sum(usersArticlesAttenCoeffMatrix)     = 80
+2020-01-08 16:34:37 sum(articlesPopularityIndexVector[,3]) = 8
+2020-01-08 16:34:37 rownames(usersArticlesMatrix)[2]       = a2
+2020-01-08 16:34:37 rownames(usersArticlesMatrix)[nrow-2]  = a6
+2020-01-08 16:34:37 colnames(usersArticlesMatrix)[2]       = B
+2020-01-08 16:34:37 colnames(usersArticlesMatrix)[nrow-2]  = H
+2020-01-08 16:34:37 sum(result)                            = 39.05
+2020-01-08 16:34:37 ncol(result)                           = 10
+2020-01-08 16:34:37 nrow(result)                           = 10
+2020-01-08 16:34:37 result[1,2]                            = 0
+2020-01-08 16:41:23 sum(jaccard)                           = 0
+2020-01-08 16:41:23 sum(usersArticlesMatrix)               = 18
+2020-01-08 16:41:23 sum(usersArticlesAttenCoeffMatrix)     = 80
+2020-01-08 16:41:23 sum(articlesPopularityIndexVector[,3]) = 8
+2020-01-08 16:41:23 rownames(usersArticlesMatrix)[2]       = a2
+2020-01-08 16:41:23 rownames(usersArticlesMatrix)[nrow-2]  = a6
+2020-01-08 16:41:23 colnames(usersArticlesMatrix)[2]       = B
+2020-01-08 16:41:23 colnames(usersArticlesMatrix)[nrow-2]  = H
+2020-01-08 16:41:23 sum(result)                            = 39.05
+2020-01-08 16:41:23 ncol(result)                           = 10
+2020-01-08 16:41:23 nrow(result)                           = 10
+2020-01-08 16:41:23 result[1,2]                            = 0
+2020-01-12 14:52:28 
+2020-01-12 14:52:28 
+2020-01-12 14:52:28 
+2020-01-12 14:52:28 SPARSEEEEEEEE
+2020-01-12 14:52:28 behaviourDistanceTime                  = system.time({
+2020-01-12 14:52:28 sum(jaccard)                           = 0
+2020-01-12 14:52:28 sum(usersArticlesMatrix)               = 6716
+2020-01-12 14:52:28 sum(usersArticlesAttenCoeffMatrix)     = 241.517660845934
+2020-01-12 14:52:28 sum(articlesPopularityIndexVector[,3]) = 4076.46465461717
+2020-01-12 14:52:28 rownames(usersArticlesMatrix)[2]       = 59d3fc3162365a76f645e3c3
+2020-01-12 14:52:28 rownames(usersArticlesMatrix)[nrow-2]  = 57227e125d84bd6ef4b1b828
+2020-01-12 14:52:28 colnames(usersArticlesMatrix)[2]       = adenor@brturbo.com.br
+2020-01-12 14:52:28 colnames(usersArticlesMatrix)[nrow-2]  = vivi.neves@hotmail.com
+2020-01-12 14:52:29 contentDistanceTime                    = system.time({
+2020-01-12 14:52:32 sum(usersTagsMatrix)                   = 33911.1463482614
+2020-01-12 14:52:33 contentDistance                        = 10710.6386118887
+2020-01-12 14:52:33 mixedDistanceTime                      = system.time({
+2020-01-12 14:52:34 return(list(contentDistance            = contentDistance
+2020-01-12 14:52:35 if (method == 'other') {
+2020-01-12 14:54:02 
+2020-01-12 14:54:02 
+2020-01-12 14:54:02 
+2020-01-12 14:54:02 SPARSEEEEEEEE
+2020-01-12 14:54:02 behaviourDistanceTime                  = system.time({
+2020-01-12 14:54:02 sum(jaccard)                           = 0
+2020-01-12 14:54:02 sum(usersArticlesMatrix)               = 6716
+2020-01-12 14:54:02 sum(usersArticlesAttenCoeffMatrix)     = 241.517660845934
+2020-01-12 14:54:02 sum(articlesPopularityIndexVector[,3]) = 4076.46465461717
+2020-01-12 14:54:02 rownames(usersArticlesMatrix)[2]       = 59d3fc3162365a76f645e3c3
+2020-01-12 14:54:02 rownames(usersArticlesMatrix)[nrow-2]  = 57227e125d84bd6ef4b1b828
+2020-01-12 14:54:02 colnames(usersArticlesMatrix)[2]       = adenor@brturbo.com.br
+2020-01-12 14:54:02 colnames(usersArticlesMatrix)[nrow-2]  = vivi.neves@hotmail.com
+2020-01-12 14:54:03 sum(result)                            = 600.494372176419
+2020-01-12 14:54:03 ncol(result)                           = 159
+2020-01-12 14:54:03 nrow(result)                           = 159
+2020-01-12 14:54:03 result[1,2]                            = 0
+2020-01-12 14:54:03 behaviourDistance                      = 600.494372176419
+2020-01-12 14:54:03 behaviourDistance                      = 600.494372176419
+2020-01-12 14:54:03 contentDistanceTime                    = system.time({
+2020-01-12 14:54:06 sum(usersTagsMatrix)                   = 33911.1463482614
+2020-01-12 14:54:06 contentDistance                        = 10710.6386118887
+2020-01-12 14:54:06 mixedDistanceTime                      = system.time({
+2020-01-12 14:54:07 return(list(contentDistance            = contentDistance
+2020-01-12 14:54:08 if (method == 'other') {
+2020-01-12 14:54:09 parameters = list(method = method,
+2020-01-12 14:55:18 
+2020-01-12 14:55:18 
+2020-01-12 14:55:18 
+2020-01-12 14:55:18 SPARSEEEEEEEE
+2020-01-12 14:55:18 behaviourDistanceTime                  = system.time({
+2020-01-12 15:45:54 sum(jaccard)                           = 0
+2020-01-12 15:45:54 sum(usersArticlesMatrix)               = 14180988
+2020-01-12 15:45:54 sum(usersArticlesAttenCoeffMatrix)     = 86937.2041902109
+2020-01-12 15:45:54 sum(articlesPopularityIndexVector[,3]) = NA
+2020-01-12 15:45:55 rownames(usersArticlesMatrix)[2]       = 5dee8df4a76fe4001d2cd14e
+2020-01-12 15:45:55 rownames(usersArticlesMatrix)[nrow-2]  = 5623fbffc9c4efd3d7b10fb8
+2020-01-12 15:45:55 colnames(usersArticlesMatrix)[2]       = 00002972@ufrgs.br
+2020-01-12 15:45:55 colnames(usersArticlesMatrix)[nrow-2]  = zzaneti@terra.com.br
